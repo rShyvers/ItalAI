@@ -42,6 +42,19 @@ jobs:
           bundler-cache: true
           cache-version: 0
       
+      - name: Cache generated WebP images
+        uses: actions/cache@v4
+        with:
+          path: assets/images/**/*.webp
+          key: ${{ runner.os }}-webp-${{ hashFiles('assets/images/**/*.jpg', 'assets/images/**/*.jpeg', 'assets/images/**/*.png', 'assets/images/**/*.gif') }}-v2
+          restore-keys: |
+            ${{ runner.os }}-webp-
+      
+      - name: Install libvips
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
+      
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5

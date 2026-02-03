@@ -1,6 +1,8 @@
 ---
 layout: post
 title: "🏆 Introduction: Sequence-to-Sequence Modeling"
+description: "ItalAI introduces sequence-to-sequence modeling fundamentals: understanding RNNs, Transformers, and State Space Models for AI. Learn why long-range dependencies matter and explore alternatives to attention mechanisms in modern neural architectures."
+image: "/assets/images/blog/cards/ssm.webp"
 category: "Transformers"
 hero_image: "/assets/images/blog/cards/ssm.webp"
 excerpt: "Is there an alternative to transformer networks?"
@@ -9,8 +11,6 @@ part: 1
 published_in_blog: true
 author: "Guido Maria D'Amely di Melendugno"
 ---
-
-### 🏆 Introduction: Sequence-to-Sequence Modeling
 
 * TOC
 {:toc}

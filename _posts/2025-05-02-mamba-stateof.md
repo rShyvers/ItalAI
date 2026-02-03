@@ -1,6 +1,8 @@
 ---
 layout: post
 title: "🚀 The State Space Models"
+description: "ItalAI deep dive into State Space Models (SSMs): from 1960s control theory to modern AI. Explore continuous and discrete SSMs, mass-spring-damper systems, recurrent vs convolutional representations, and how Kalman's framework powers today's sequence modeling architectures."
+image: "/assets/images/blog/cards/ssm.webp"
 category: "Transformers"
 hero_image: "/assets/images/blog/cards/ssm.webp"
 excerpt: "Is there an alternative to transformer networks?"
@@ -9,8 +11,6 @@ part: 2
 published_in_blog: true
 author: "Guido Maria D'Amely di Melendugno"
 ---
-
-### 🚀 The State Space Models
 
 * TOC
 {:toc}
