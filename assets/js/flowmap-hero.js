@@ -8,7 +8,7 @@ import {
     Vec4,
     Texture,
     Flowmap
-} from 'https://unpkg.com/ogl';
+} from 'https://esm.sh/ogl@1.0.11/es2022/ogl.mjs';
 
 // Flowmap deformation effect - mimics Elementor Aigency theme exactly
 function flowmap_deformation() {

@@ -33,11 +33,11 @@ safe: false
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
-  - jekyll-minifier
+  # - jekyll-minifier
 
-jekyll-minifier:
-  exclude: ['robots.txt']  # files to skip
-  compress_javascript: true 
+# jekyll-minifier:
+#   exclude: ['robots.txt']  # files to skip
+#   compress_javascript: true 
 
 insights_manifest:
   per_page: 12

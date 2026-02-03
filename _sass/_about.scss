@@ -573,6 +573,7 @@
   transform: translateY(0);
 }
 .socials {
+  text-decoration: none;
   color: var(--standard-light);
   &:hover {
     color: var(--standard-blue);
