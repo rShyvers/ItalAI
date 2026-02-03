@@ -2,7 +2,6 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
 name: Deploy Jekyll site to Pages
 
@@ -10,7 +9,6 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -26,6 +24,9 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  PRODUCTION_URL: https://italailabs.com
+
 jobs:
   # Build job
   build:
@@ -33,24 +34,70 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
       - name: Setup Ruby
-        # https://github.com/ruby/setup-ruby/releases/tag/v1.207.0
         uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4
         with:
-          ruby-version: '3.3' # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-          cache-version: 0 # Increment this number if you need to re-download cached gems
+          ruby-version: '3.3'
+          bundler-cache: true
+          cache-version: 0
+      
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+      
+      - name: Determine deployment URL
+        id: determine_url
+        run: |
+          # GitHub Pages URL will be available from the pages setup
+          page_url="${{ steps.pages.outputs.origin }}"
+          echo "Detected GitHub Pages URL: $page_url"
+          echo "page_url=$page_url" >> $GITHUB_OUTPUT
+      
+      - name: Download current sitemap (before build)
+        id: download_old
+        continue-on-error: true
+        run: |
+          site_url="${{ steps.determine_url.outputs.page_url }}"
+          echo "Downloading current live sitemap from: $site_url/sitemap.xml"
+          if curl -sf "$site_url/sitemap.xml" -o old_sitemap.xml; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✓ Current sitemap downloaded"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠ No existing sitemap found (first deployment?)"
+          fi
+      
       - name: Build with Jekyll
-        # Outputs to the './_site' directory by default
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
+      
+      - name: Compare sitemaps (before upload)
+        id: sitemap_check
+        run: |
+          if [ "${{ steps.download_old.outputs.exists }}" = "false" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✓ First deployment - will notify search engines"
+          else
+            # Compare old sitemap with newly built one
+            if diff -I '<lastmod>' -I '<lastmod>.*</lastmod>' old_sitemap.xml _site/sitemap.xml > /dev/null 2>&1; then
+              echo "changed=false" >> $GITHUB_OUTPUT
+              echo "⏭ Sitemap unchanged - will skip search engine notification"
+            else
+              echo "changed=true" >> $GITHUB_OUTPUT
+              echo "✓ Sitemap changed - will notify search engines"
+              echo "Changes detected:"
+              diff -I '<lastmod>' old_sitemap.xml _site/sitemap.xml | head -20 || true
+            fi
+          fi
+      
       - name: Upload artifact
-        # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
+    
+    outputs:
+      sitemap_changed: ${{ steps.sitemap_check.outputs.changed }}
+      deployment_url: ${{ steps.determine_url.outputs.page_url }}
 
   # Deployment job
   deploy:
@@ -63,3 +110,82 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      
+      - name: Verify production URL
+        id: verify_url
+        if: needs.build.outputs.sitemap_changed == 'true'
+        run: |
+          deployed_url="${{ steps.deployment.outputs.page_url }}"
+          expected_url="${{ env.PRODUCTION_URL }}/"
+          
+          echo "Deployed URL: $deployed_url"
+          echo "Expected Production URL: $expected_url"
+          
+          # Normalize URLs (remove trailing slash for comparison)
+          deployed_normalized="${deployed_url%/}"
+          expected_normalized="${expected_url%/}"
+          
+          if [ "$deployed_normalized" = "$expected_normalized" ]; then
+            echo "is_production=true" >> $GITHUB_OUTPUT
+            echo "✓ Confirmed PRODUCTION deployment"
+          else
+            echo "is_production=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ This is a DEV/STAGING deployment"
+            echo "Search engine notification will be skipped for non-production deployments"
+          fi
+      
+      - name: Wait for site to be live
+        if: needs.build.outputs.sitemap_changed == 'true' && steps.verify_url.outputs.is_production == 'true'
+        run: |
+          echo "Waiting for new sitemap to be accessible..."
+          max_attempts=30
+          attempt=0
+          site_url="${{ steps.deployment.outputs.page_url }}"
+          
+          while [ $attempt -lt $max_attempts ]; do
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" "$site_url/sitemap.xml")
+            
+            if [ "$http_code" = "200" ]; then
+              echo "✓ Site is live! (HTTP $http_code)"
+              sleep 10  # Extra buffer to ensure CDN has propagated
+              break
+            fi
+            
+            attempt=$((attempt + 1))
+            echo "Attempt $attempt/$max_attempts: Got HTTP $http_code, waiting 10 seconds..."
+            sleep 10
+          done
+          
+          if [ $attempt -eq $max_attempts ]; then
+            echo "⚠ Warning: Site may not be fully propagated yet, proceeding anyway"
+          fi
+      
+      - name: Notify Search Engines (PRODUCTION ONLY)
+        if: needs.build.outputs.sitemap_changed == 'true' && steps.verify_url.outputs.is_production == 'true'
+        run: |
+          site_url="${{ steps.deployment.outputs.page_url }}"
+          echo "🚀 PRODUCTION DEPLOYMENT - Notifying search engines"
+          # echo "Sitemap URL: $site_url/sitemap.xml"
+          
+          # echo "📢 Notifying Google..."
+          # curl -s "https://www.google.com/ping?sitemap=$site_url/sitemap.xml" || echo "⚠ Google ping failed"
+          
+          # echo "📢 Notifying Bing..."
+          # curl -s "https://www.bing.com/ping?sitemap=$site_url/sitemap.xml" || echo "⚠ Bing ping failed"
+          
+          # echo "✅ Search engines notified!"
+      
+      - name: Deployment summary
+        run: |
+          echo "=== Deployment Summary ==="
+          echo "Deployed to: ${{ steps.deployment.outputs.page_url }}"
+          echo "Sitemap changed: ${{ needs.build.outputs.sitemap_changed }}"
+          echo "Is production: ${{ steps.verify_url.outputs.is_production }}"
+          
+          if [ "${{ needs.build.outputs.sitemap_changed }}" = "false" ]; then
+            echo "ℹ️ No sitemap changes - search engine notification skipped"
+          elif [ "${{ steps.verify_url.outputs.is_production }}" = "false" ]; then
+            echo "ℹ️ DEV deployment - search engine notification skipped"
+          else
+            echo "✅ Production deployment with changes - search engines notified"
+          fi

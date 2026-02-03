@@ -8,6 +8,7 @@ series: mamba
 part: 3
 published_in_blog: true
 author: "Guido Maria D'Amely di Melendugno"
+last_modified_at: 2026-02-03
 ---
 
 ### 🦛 Beyond Vanilla SSMs
