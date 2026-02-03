@@ -35,7 +35,7 @@
                         {% if include.crumb_parent_url %}
                             <a href="{{ include.crumb_parent_url }}">{{ include.crumb_parent_label }}</a> /
                         {% endif %}
-                        <a class="strong">{{ include.crumb_current | default: page.title | upcase }}</a>
+                        <span class="strong">{{ include.crumb_current | default: page.title | upcase }}</span>
                     </span>
                     {% if include.tagline %}
                         <span class="breadcrumb-tagline">{{ include.tagline }}</span>

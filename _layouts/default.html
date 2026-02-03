@@ -11,12 +11,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<link rel="stylesheet" href="/assets/fontawesome/css/fontawesome.css">
-<link rel="stylesheet" href="/assets/fontawesome/css/brands.css">
-<link rel="stylesheet" href="/assets/fontawesome/css/solid.css">
+<link rel="preload" href="/assets/fontawesome/css/fontawesome.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="/assets/fontawesome/css/brands.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" href="/assets/fontawesome/css/solid.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap" rel="stylesheet" style="font-display: swap;">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&display=swap" rel="stylesheet" style="font-display: swap;">
+  <link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+  <link href="/assets/fontawesome/css/brands.css" rel="stylesheet">
+  <link href="/assets/fontawesome/css/solid.css" rel="stylesheet">
 </noscript>
 {% if page.url contains '/insights/' and page.url != '/insights/' %}
   {% assign stylesheet = 'post' %}

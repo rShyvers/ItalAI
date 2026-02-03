@@ -41,6 +41,11 @@ description: "A short summary for SEO."
 ---
 ```
 
+SEO Regex Check: used to search for a tags that go no where.
+```regex
+<a\s+(?![^>]*href)[^>]*>
+```
+
 The default meta description is set in `_config.yaml`.
 No per-page descriptions have been written; all pages currently use the default unless you add a `description` field to the post's front matter or the HTML page.
 

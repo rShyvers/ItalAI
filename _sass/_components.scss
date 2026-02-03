@@ -83,6 +83,8 @@
     color: var(--standard-dark);
     width: auto;
     box-shadow: 0 4px 19.3px 0 var(--standard-light-alt);
+    cursor: pointer;
+    border: 2px solid transparent;
     &:hover,
     &.selected {
         box-shadow: 0 4px 19.3px 0 var(--standard-blue);

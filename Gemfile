@@ -9,6 +9,6 @@ gem "ruby-vips"
 group :jekyll_plugins do
   gem "jekyll-sitemap"
   gem "jekyll-seo-tag"
-  # gem 'jekyll-minifier'
+  gem 'jekyll-minifier'
   gem 'kramdown-math-katex'
 end

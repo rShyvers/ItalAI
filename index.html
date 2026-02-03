@@ -107,12 +107,14 @@ title: Home
       </h2>
       <nav class="tag-grid">
         {% for card in site.data.revolution-cards %}
-        <a
+        <button
           class="tag-button {% if forloop.first %}selected{% endif %}"
           data-target="{{ card.id }}"
+          type="button"
+          aria-label="Show {{ card.title_short }}"
         >
           {{ card.title_short }}
-        </a>
+        </button>
         {% endfor %}
       </nav>
       <div class="content-cards">
