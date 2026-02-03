@@ -2,10 +2,10 @@
 layout: default
 title: What's Next
 ---
+    
 {%- capture hero_heading -%}
-THE NEXT FRONTIER OF <span class="highlight-ai">AI</span><br>
-IS <span class="highlight-gray italic weak">PHYSICAL</span>
-<span class="period">.</span>
+THE NEXT FRONTIER OF <span class="highlight-light-alt weak italic">AI</span><br />
+IS <span class="highlight-light-alt weak italic">PHYSICAL</span><span class="period">.</span>
 {%- endcapture -%}
 {% include hero.html
   heading=hero_heading
@@ -14,6 +14,7 @@ IS <span class="highlight-gray italic weak">PHYSICAL</span>
   title-style="color: var(--standard-light);"
   hero-style="background: var(--standard-blue);"
   breadcrumb-style="background: var(--standard-dark); color: var(--standard-light);"
+  bg_image="/assets/images/roadmap-hero.webp"
 %}
 
 <!-- Looking Ahead Section -->
@@ -21,21 +22,21 @@ IS <span class="highlight-gray italic weak">PHYSICAL</span>
   <div class="container">
     <div class="ahead-grid">
       <div class="ahead-image">
-        <img src="/assets/images/team.webp" alt="Looking Ahead" loading="lazy">
+        <img src="/assets/images/roadmap.webp" alt="Looking Ahead" loading="lazy">
       </div>
       <div class="ahead-content">
-        <p class="section-label">LOOKING AHEAD</p>
-        <h2>
+        <h7 class="section-label">LOOKING AHEAD</h7>
+        <h3>
           From software to the<br>
           physical world<span class="period">.</span>
-        </h2>
-        <p class="description">
+        </h3>
+        <p class="small description">
           AI has achieved extraordinary results in digital environments.
         </p>
-        <p class="description">
+        <p class="small description">
           The next challenge is operating in the physical world, where uncertainty, time, and interaction with the environment are unavoidable.
         </p>
-        <p class="description">
+        <p class="small description">
           Robotics marks a new phase for artificial intelligence, requiring systems that can perceive, act, and adapt beyond controlled settings.
         </p>
       </div>
@@ -50,11 +51,11 @@ IS <span class="highlight-gray italic weak">PHYSICAL</span>
     <div class="vision-card-content">
     {% for card in site.data.vision-cards %}
       <div class="vision-card {{ card.section_style }}"> 
-        <img src="{{ card.image | replace: '.png', '.webp' | replace: '.jpg', '.webp' }}" alt="" class="vc-img" loading="lazy"> 
+        <img src="{{ card.image }}" alt="" class="vc-img" loading="lazy"> 
         <div class="vc-content {{ card.card_style }}"> 
-          <h4>{{ card.title }}<span class="period">.</span></h4> 
+          <h5>{{ card.title }}<span class="period">.</span></h5> 
           {% for paragraph in card.text %} 
-          <p>{{ paragraph }}</p> 
+          <p class="small">{{ paragraph }}</p> 
           {% endfor %} 
         </div> 
       </div>

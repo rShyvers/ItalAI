@@ -40,23 +40,36 @@ body {
 
     // Typography
     --letter-spacing: -6%;
-    --header-family: 'JetBrains Mono', monospace;
-    --body-family: 'DM Sans', sans-serif;
+    --header-family: "JetBrains Mono", monospace;
+    --body-family: "DM Sans", sans-serif;
 
-    --font-size: clamp(0.95rem, 1vw + 0.5rem, 1rem);
-    
-    --h1-size: clamp(2rem, 3vw + 1rem, 4rem);        /* 32px -> 72px */
-    --h2-size: clamp(1.5rem, 2.5vw + 0.75rem, 3rem); /* 24px -> 36px */
-    --h3-size: clamp(1.25rem, 2vw + 0.5rem, 1.5rem); /* 20px -> 27px */
-    --h4-size: clamp(1.1rem, 1.5vw + 0.5rem, 1.3rem); /* 17.6px -> 23.4px */
-    --h5-size: clamp(0.95rem, 1vw + 0.5rem, 1rem);    /* 15.2px -> 18px */
-    --h6-size: clamp(0.85rem, 0.5vw + 0.5rem, 0.9rem); /* 13.6px -> 16.2px */
-    --h7-size: clamp(0.75rem, 0.5vw + 0.4rem, 0.8rem); /* 12px -> 14.4px */
-    --p-large-size: clamp(1.125rem, 1vw + 0.75rem, 1.25rem);  /* 18px -> 22.5px */
-    --p-medium-size: clamp(1rem, 0.5vw + 0.75rem, 1.125rem);  /* 16px -> 20.25px */
-    --p-small-size: clamp(0.875rem, 0.5vw + 0.65rem, 1rem);   /* 14px -> 18px */
+    /* Designer constants (px) -> max values in rem (base 16px) */
+    /* --h1-size: 70px;  -> 4.375rem */
+    /* --h2-size: 60px;  -> 3.75rem */
+    /* --h3-size: 50px;  -> 3.125rem */
+    /* --h4-size: 40px;  -> 2.5rem */
+    /* --h5-size: 25px;  -> 1.5625rem */
+    /* --h6-size: 22px;  -> 1.375rem */
+    /* --h7-size: 20px;  -> 1.25rem */
+    /* --p-large-size: 28px; -> 1.75rem */
+    /* --p-medium-size: 25px; -> 1.5625rem */
+    /* --p-small-size: 22px; -> 1.375rem */
 
-    --button-font-family: 'JetBrains Mono', monospace;
+
+    --h1-size: clamp(2rem, 4vw + 1.25rem, 4.375rem); /* 32px -> 70px */
+    --h2-size: clamp(1.75rem, 3.2vw + 1rem, 3.75rem); /* 28px -> 60px */
+    --h3-size: clamp(1.5rem, 2.5vw + 0.75rem, 3.125rem); /* 24px -> 50px */
+    --h4-size: clamp(1.25rem, 2vw + 0.5rem, 2.5rem); /* 20px -> 40px */
+    --h5-size: clamp(1rem, 1.25vw + 0.5rem, 1.5625rem); /* 16px -> 25px */
+    --h6-size: clamp(0.875rem, 0.8vw + 0.45rem, 1.375rem); /* 14px -> 22px */
+    --h7-size: clamp(0.85rem, 0.6vw + 0.4rem, 1.25rem); /* 13.6px -> 20px */
+
+    --p-large-size: clamp(1rem, 1vw + 0.9rem, 1.75rem); /* 16px -> 28px */
+    --p-medium-size: clamp(0.9375rem, 0.6vw + 0.85rem,  1.5625rem); /* 15px -> 25px */
+    --p-small-size: clamp(0.875rem, 0.5vw + 0.8rem, 1.375rem); /* 14px -> 22px */
+    --font-size: clamp(0.9rem, 0.45vw + 0.9rem, 1rem);
+
+    --button-font-family: "JetBrains Mono", monospace;
     --button-font-size: 16px;
 
     --paragraph-spacing: 1.875rem;
@@ -78,23 +91,53 @@ body {
     --radius-lg: 20px;
     --radius-xl: 25px;
     --radius-2xl: 33px;
+    --radius-3xl: 50px;
     --radius-full: 50px;
 }
 
-textarea, input {
+textarea,
+input {
     font-size: var(--body-xs-size);
     font-weight: var(--body-xs-weight);
     letter-spacing: var(--body-xs-letter-spacing);
 }
 
-h1, h2, h3, h4, h5, h6, h7, a {
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: -6%
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7,
+a {
+    font-family: var(--header-family);
+    letter-spacing: -6%;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7 {
+    margin: 1rem 0;
 }
 
-p, label, input, textarea { 
-    font-family: 'DM Sans', sans-serif;
+p,
+label,
+input,
+textarea {
+    font-family: var(--body-family);
     letter-spacing: 0%;
+}
+p.large {
+    font-size: var(--p-large-size);
+}
+p.medium {
+    font-size: var(--p-medium-size);
+}
+p.small {
+    font-size: var(--p-small-size);
 }
 
 h1 { font-size: var(--h1-size); }

@@ -29,8 +29,10 @@ layout: default
   crumb_parent_label="INSIGHTS"
   crumb_current=page.series
   tagline=page.excerpt
-  hero-style="background: #0D0221;"
-  breadcrumb-style="background: #F6F4EC; color: #0D0221;"
+  title-style="color: var(--standard-light);"
+  hero-style="background: var(--standard-dark);"
+  breadcrumb-style="background: var(--standard-light); color: var(--standard-dark);"
+  bg_image=page.hero_image
 %}
 
 <!-- Post Content Section -->
@@ -66,12 +68,13 @@ layout: default
             {% assign recent_posts = sorted_posts | limit: 3 %}
             {% for post in recent_posts %}
             <a href="{{ post.url }}" class="recent-post-item">
-              {% if post.image %}
-              <img src="{{ post.image }}" alt="{{ post.title }}" class="recent-post-thumb">
+              {% if post.hero_image %}
+              <img src="{{ post.hero_image }}" alt="{{ post.title }}" class="recent-post-thumb">
               {% endif %} 
               <div class="recent-post-info">
-                <p class="recent-post-date">{{ post.date | date: "%d-%m-%Y" }}</p>
-                <p class="recent-post-title">{{ post.title | strip_html | truncatewords: 10 }}</p>
+                <p class="recent-post-date">{{ post.date | date: "%d-%B-%Y" }}</p>
+                <p class="recent-post-title">{{ post.title | strip_html }}</p>
+                <p class="recent-post-excerpt">{{ post.excerpt | strip_html }}</p>
               </div>
             </a>
             {% endfor %}
@@ -82,12 +85,12 @@ layout: default
       <!-- Main Content -->
       <article class="post-main">
         <!-- Featured Image -->
-        {% if page.image %}
+        {% if page.hero_image %}
         <div class="post-featured-image">
           {% if page.date %}
-          <span class="insight-tag" style="top: auto; bottom: var(--space-sm);">{{ page.date | date: "%d %b %Y" }}</span>
+          <span class="insight-tag" style="top: auto; bottom: var(--space-sm);">{{ page.date | date: "%d %B %Y" }}</span>
           {% endif %}
-          <img src="{{ page.image }}" alt="{{ page.title }}" fetchpriority="high">
+          <img src="{{ page.image |  default: page.hero_image }}" alt="{{ page.title }}" fetchpriority="high">
         </div>
         {% endif %}
 

@@ -15,6 +15,7 @@ Turning research into<br>
   title-style="color: var(--standard-dark);"
   hero-style="background: var(--standard-green-alt);"
   breadcrumb-style="background: var(--standard-green); color: var(--standard-light);"
+  bg_image="/assets/images/work-hero.webp"
 %}
 
 <!-- What We Focus On Section -->
@@ -22,17 +23,17 @@ Turning research into<br>
   <div class="container">
     <div class="focus-grid">
       <div class="focus-image">
-        <img src="/assets/images/team.webp" alt="What We Focus On" loading="lazy">
+        <img src="/assets/images/work.webp" alt="What We Focus On" loading="lazy">
       </div>
       <div class="focus-content">
-        <p class="section-label">WHAT WE FOCUS ON</p>
-      <h2>
+        <h7 class="section-label">WHAT WE FOCUS ON</h7>
+      <h3>
         What we focus on<span class="period">.</span>
-      </h2>
-      <p class="description">
+      </h3>
+      <p class="small description">
         Our work starts from research and continues through system design and deployment.
       </p>
-      <p class="description">
+      <p class="small description">
         We focus on areas where scientific rigor and real-world constraints must coexist.
       </p>
       </div>
@@ -43,62 +44,64 @@ Turning research into<br>
 
 <!-- Capabilities Section -->
 <section class="capabilities-section">
-  <div class="container">
-    <div class="capabilities-content">
-      <p class="section-label">WHAT WE BUILD</p>
-      <h2>
-        CORE RESEARCH AND<br>
-        SYSTEM CAPABILITIES<span class="period">.</span>
-      </h2>
-      
-<div class="capabilities-list">
-  {% for capability in site.data.capabilities %}
-  <details class="capability-item">
-    <summary class="capability-summary">
-      <span class="text-wrapper">
-        <span class="text-content">
-          <span class="text-light">
-            <h3 class="capability-number">{{ capability.number }}</h3>
-            <p class="capability-title">{{ capability.title }}</p>
-          </span>
-          <span class="text-dark">
-            <h3 class="capability-number">{{ capability.number }}</h3>
-            <p class="capability-title">{{ capability.title }}</p>
-          </span>
-        </span>
-      </span>
-    </summary>
-    <div class="capability-details">
-      {% if capability.type == 'papers' %}
-      <div class="papers-list">
-        {% for paper in capability.papers %}
-        <div class="paper-item">
-          <div class="paper-date-col">
-            <span class="paper-date">{{ paper.date }}</span>
-          </div>
-          <div class="paper-topic-col">
-            <span class="paper-topic">{{ paper.topic }}</span>
-          </div>
-          <div class="paper-content-col">
-            <h4 class="paper-title">
-              <a href="{{ paper.link }}">{{ paper.title }}</a>
-            </h4>
-            <p class="paper-description">{{ paper.description }}</p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="capability-text">
-        {{ capability.content | markdownify }}
-      </div>
-      {% endif %}
-    </div>
-  </details>
-  {% endfor %}
-</div>
+    <div class="container">
+        <div class="capabilities-content">
+            <h7 class="section-label">WHAT WE BUILD</h7>
+            <h3>
+                CORE RESEARCH AND<br>
+                SYSTEM CAPABILITIES<span class="period">.</span>
+            </h3>
+            <div class="capabilities-list">
+            {% for capability in site.data.capabilities %}
+            <details class="capability-item">
+                <summary class="capability-summary">
+                <span class="text-wrapper">
+                    <span class="text-content">
+                      <span class="text-light">
+                          <h3 class="capability-number">{{ capability.number }}</h3>
+                          <h1 class="capability-title weak">{{ capability.title }}</h1>
+                      </span>
+                      <span class="text-dark">
+                          <h3 class="capability-number">{{ capability.number }}</h3>
+                          <h1 class="capability-title weak">{{ capability.title }}</h1>
+                      </span>
+                    </span>
+                </span>
+                </summary>
+                <div class="capability-details">
+                {% if capability.type == 'papers' %}
+                <div class="papers-list">
+                    {% for paper in capability.papers %}
+                    <div class="paper-item">
+                    <div class="paper-date-col">
+                        <p class="medium paper-date">{{ paper.date }}</p>
+                    </div>
+                    <div class="paper-topic-col">
+                        <p class="small paper-topic">{{ paper.topic }}</p>
+                    </div>
+                    <div class="paper-content-col">
+                        <h5 class="paper-title">
+                          <a href="{{ paper.link }}">{{ paper.title }}</a>
+                        </h5>
+                        <p class="paper-description">{{ paper.description }}</p>
+                    </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-summary">
+                    <h3 class="capability-number" style="height: 1px; opacity: 0;">{{ capability.number }}</h3>
+                    <span>
+                      {{ capability.content | markdownify | replace: '<p>', '<p class="medium capability-text" style="">' }}
+                    </span>
+                </div>
+                {% endif %}
+                </div>
+            </details>
+            {% endfor %}
+            </div>
 
+        </div>
     </div>
-  </div>
-  <a class="cta-center cta-button cta-overlap" href="/roadmap">DISCOVER WHAT'S NEXT</a>
+    <a href="/roadmap" class="cta-center cta-button cta-overlap">DISCOVER WHAT'S NEXT</a>
 </section>

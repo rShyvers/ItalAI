@@ -9,7 +9,7 @@
     overflow: hidden;
     
     &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -73,7 +73,7 @@
         position: relative;
         z-index: 2;
         padding: 0 2rem 0;
-        
+
         h1 {
             font-weight: 800;
             line-height: 1.1;
@@ -81,8 +81,8 @@
             margin-bottom: var(--space-md);
             text-transform: uppercase;
         }
-        
-        h5 {
+
+        p {
             font-weight: 400;
             margin-top: 0;
             margin-bottom: 0;
@@ -108,20 +108,21 @@
     padding: 1rem 0.5rem;
 
     .card {
-        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border-radius: var(--radius-lg);
-        padding: 1rem;
+        padding: 2rem;
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all var(--transition-base);
         position: relative;
         overflow: hidden;
         img {
+            --image-padding: 0.5rem;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            right: var(--image-padding);
+            top: var(--image-padding);
+            height: calc(100% - (var(--image-padding) * 2));
+            width: auto;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
             object-position: center;
             z-index: 0;
@@ -135,7 +136,7 @@
         }
     }
     *::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -144,13 +145,13 @@
         z-index: 1;
         pointer-events: none;
     }
-    .blue::before {
+    .blue {
         background: #6A7CFF;
     }
-    .dark::before {
+    .dark {
         background: #1C1C1E;
     }
-    .green::before {
+    .green {
         background: #32B692;
     }
 }
@@ -160,7 +161,7 @@
 }
 .content {
     padding: 0 2rem;
-    h5 {
+    h3 {
         margin: 0 0 1rem;
     }
 }
@@ -168,10 +169,12 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
-    margin-bottom: 3rem;
+    margin: 3rem 0;
+}
+.feature-label {
+    margin: 0;
 }
 .feature-title {
-    font-size: small;
     margin-top: 0.5rem;
 }
 
@@ -198,7 +201,7 @@
     opacity: 0;
     position: relative;
     overflow: hidden;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-3xl);
     margin: var(--space-lg) 0;
     padding: var(--space-2xl);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -210,20 +213,23 @@
     }
 
     &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, rgba(106, 124, 255, 0.45), rgba(106, 124, 255, 0.45));
+        background: var(--standard-dark);
+        opacity: 0.6;
         z-index: 1;
         pointer-events: none;
     }
 
-    h2, .content-text {
+    h4,
+    .content-text {
         position: relative;
         z-index: 2;
+        margin-top: 0;
         margin-bottom: var(--space-sm);
     }
 
@@ -244,9 +250,7 @@
     }
 
     p {
-        font-family: 'DM Sans', sans-serif;
         color: #F6F4EC;
-        font-size: var(--fz-base);
         font-weight: 100;
         opacity: 0.9;
         margin-bottom: 0;

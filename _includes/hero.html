@@ -11,9 +11,9 @@
         <div class="main-hero-content">
             {% include animated-header.html title=include.title %}
             {% if include.subtitle %}
-                <h5 class="highlight-green-alt italic">
+                <p class="large highlight-green-alt italic">
                     {{ include.subtitle }}
-                </h5>
+                </p>
             {% endif %}
             <a class="cta-button-alt" href="/about">{{ include.cta_text }}</a>
         </div>
@@ -21,26 +21,28 @@
 </section>
 <script type="module" src="/assets/js/flowmap-hero.js"></script>
 {% else %}
-<section class="common-hero"{% if include.hero-style %} style="{{ include.hero-style }}"{% endif %}>
-    {% if include.bg_image %}
-        <img src="{{ include.bg_image }}" alt="" loading="lazy">
-    {% endif %}
+<section class="common-hero">
     <div class="container">
-        <div class="common-hero-content">
-            <h2 class="common-hero-title" {% if include.title-style %}style="{{ include.title-style }}"{% endif %}>{{ include.heading }}</h2>
-            <div class="breadcrumb"{% if include.breadcrumb-style %} style="{{ include.breadcrumb-style }}"{% endif %}>
-                <span class="breadcrumb-trail">
-                    <a href="/">HOME</a> /
-                    {% if include.crumb_parent_url %}
-                        <a href="{{ include.crumb_parent_url }}">{{ include.crumb_parent_label }}</a> /
+        <div class="spacer">
+            <div class="common-hero-content" {% if include.hero-style %} style="{{ include.hero-style }}"{% endif %}>  
+            {% if include.bg_image %}
+                <img src="{{ include.bg_image }}" alt="" loading="lazy">
+            {% endif %}
+                <h3 class="common-hero-title" {% if include.title-style %}style="{{ include.title-style }}"{% endif %}>{{ include.heading }}</h2>
+                <div class="breadcrumb"{% if include.breadcrumb-style %} style="{{ include.breadcrumb-style }}"{% endif %}>
+                    <span class="breadcrumb-trail">
+                        <a href="/">HOME</a> /
+                        {% if include.crumb_parent_url %}
+                            <a href="{{ include.crumb_parent_url }}">{{ include.crumb_parent_label }}</a> /
+                        {% endif %}
+                        <a class="strong">{{ include.crumb_current | default: page.title | upcase }}</a>
+                    </span>
+                    {% if include.tagline %}
+                        <span class="breadcrumb-tagline">{{ include.tagline }}</span>
                     {% endif %}
-                    <a class="strong">{{ include.crumb_current | default: page.title | upcase }}</a>
-                </span>
-                {% if include.tagline %}
-                    <span class="breadcrumb-tagline">{{ include.tagline }}</span>
-                {% endif %}
-            </div>
-        </div> 
+                </div>
+            </div> 
+        </div>
     </div>
 </section>
 {% endif %}

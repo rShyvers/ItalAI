@@ -85,4 +85,4 @@ This project uses several custom Jekyll plugins:
 - **Development:** Use `--livereload` for a fast feedback loop. Save files to trigger reloads.
 - **Deployment:** Some plugins (notably `vips_webp_generator.rb`) may not work on GitHub Actions due to system library constraints. This does not affect the published site, as only WebP assets are shipped.
 
-For more details, see the [Jekyll documentation](https://jekyllrb.com/docs/).
+For more, see the [Jekyll documentation](https://jekyllrb.com/docs/).

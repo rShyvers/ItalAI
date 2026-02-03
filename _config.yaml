@@ -9,9 +9,9 @@ loading_debug: true
 
 # Do not publish legacy raster assets; only WebP should ship in the build artifacts.
 exclude:
-  - "assets/images/**/*.jpg"
-  - "assets/images/**/*.jpeg"
-  - "assets/images/**/*.png"
+  # - "assets/images/**/*.jpg"
+  # - "assets/images/**/*.jpeg"
+  # - "assets/images/**/*.png"
   # - "assets/images/**/*.gif"
   - "scripts"
   - "README.md"
