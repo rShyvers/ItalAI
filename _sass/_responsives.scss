@@ -6,7 +6,11 @@ $mobile-extra: 767px;
 $mobile: 575px;
 
 @media (max-width: $tablet-extra) {
-
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(auto, auto);
+    }
 }
 
 @media (max-width: $tablet) {
@@ -85,11 +89,6 @@ $mobile: 575px;
         grid-template-columns: repeat(1, auto);
         grid-template-rows: repeat(auto, auto);
     }
-    .insights-grid {
-        display: grid;
-        grid-template-columns: repeat(1, auto);
-        grid-template-rows: repeat(auto, auto);
-    }
     .team-grid {
         flex-wrap: wrap;
     }
@@ -101,14 +100,12 @@ $mobile: 575px;
         flex: 45%;
     }
 }
-// * {
-//   outline: 1px solid red !important;
-// }
+
 @media (max-width: $mobile-extra) {
     footer .container > * {
-        grid-template-areas: 
-            "info" 
-            "form" 
+        grid-template-areas:
+            "info"
+            "form"
             "logo";
         grid-column: 1fr;
         gap: 2rem 0; // Reduce or remove horizontal gap
@@ -129,6 +126,11 @@ $mobile: 575px;
         grid-template-columns: 1fr;      /* 1 column */
         grid-template-rows: repeat(3, 1fr); /* 3 rows */
     }
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(1, auto);
+        grid-template-rows: repeat(auto, auto);
+    }
     .who-grid,
     .focus-grid,
     .ahead-grid {
@@ -140,4 +142,7 @@ $mobile: 575px;
     .work-with-us-card {
         grid-column: span 1;
     }
+}
+@media (max-width: $mobile) {
+
 }

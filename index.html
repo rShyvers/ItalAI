@@ -17,35 +17,35 @@ title: Home
     <div class="card-grid">
         <div class="card blue card-animated slide-in-top" data-delay="300">
             <img
-            src=""
+            src="/assets/images/frontier-research.webp"
             alt=""
             loading="lazy"
             />
-            <h4 class="uppercase">Frontier<br/>Research</h4>
+            <h5 class="uppercase">Frontier<br/>Research</h5>
             <p>
-                Deep AI & robotics research at global scale.
+                Deep AI & robotics<br>research at global scale.
             </p>
         </div>
         <div class="card dark card-animated slide-in-top" data-delay="600">
             <img
-            src=""
+            src="/assets/images/applied-intelligence.webp"
             alt=""
             loading="lazy"
             />
-            <h4 class="uppercase">Applied<br/>Intelligence</h4>
+            <h5 class="uppercase">Applied<br/>Intelligence</h5>
             <p>
-                From scientific breakthroughs to real-world systems.
+                From scientific breakthroughs<br>to real-world systems.
             </p>
         </div>
         <div class="card green card-animated slide-in-top" data-delay="900">
             <img
-            src=""
+            src="/assets/images/global-ecosystem.webp"
             alt=""
             loading="lazy"
             />
-            <h4 class="uppercase">Global<br/>Ecosystem</h4>
+            <h5 class="uppercase">Global<br/>Ecosystem</h5>
             <p>
-                Connected with Berkeley, NVIDIA, Panasonic, Sapienza.
+                Connected with Berkeley,<br>NVIDIA, Panasonic,<br>Sapienza.
             </p>
         </div>
     </div>
@@ -58,13 +58,12 @@ title: Home
 <section class="content-section">
   <div class="container">
     <div class="content">
-      <h6 class="section-label">What We Do</h6>
+      <h7 class="section-label">What We Do</h7>
 
-      {% include animated-header.html title="Turning frontier|AI and robotics,highlight-blue|break|research|into|real-world systems,highlight-blue italic weak period" tag="h2" %}
+      {% include animated-header.html title="Turning frontier|AI and robotics,highlight-blue|break|research|into|real-world systems,highlight-blue italic weak period" tag="h3" %}
 
-      <p class="content-description">
-        We design and deploy AI and robotics systems that move beyond the lab and
-        work in real environments.
+      <p class="medium content-description weak">
+        We design and deploy AI and robotics systems<br> that move beyond the lab and work in real<br>environments.
       </p>
 
       <div class="features-grid">
@@ -76,17 +75,17 @@ title: Home
         </div>
 
         <div class="feature card-animated slide-in-bottom" data-delay="600">
-          <h5 class="feature-label highlight-blue">ROBOTICS</h6>
+          <h5 class="feature-label highlight-blue">ROBOTICS</h5>
           <p class="feature-title">Systems designed for real environments.</p>
         </div>
 
         <div class="feature card-animated slide-in-bottom" data-delay="900">
-          <h5 class="feature-label highlight-dark">TECH TRANSFER</h6>
+          <h5 class="feature-label highlight-dark">TECH TRANSFER</h5>
           <p class="feature-title">From lab breakthroughs to real products.</p>
         </div>
 
         <div class="feature card-animated slide-in-bottom" data-delay="1200">
-          <h5 class="feature-label highlight-green">INDUSTRIAL IMPACT</h6>
+          <h5 class="feature-label highlight-green">INDUSTRIAL IMPACT</h5>
           <p class="feature-title">
             Automation/reliability and intelligent operations.
           </p>
@@ -100,7 +99,7 @@ title: Home
 <section class="why-section">
   <div class="container">
     <div class="why-content">
-      <h6 class="section-label">Why Now</h6>
+      <h7 class="section-label">Why Now</h7>
       <h2>
         A <span class="highlight-blue italic weak">new industrial revolution</span
         ><br/>
@@ -124,19 +123,19 @@ title: Home
         >
           {% if card.background_image != "" %}
           <img
-            src="{{ card.background_image | replace: '.png', '.webp' | replace: '.jpg', '.webp' }}"
+            src="{{ card.background_image }}"
             alt=""
             class="content-card-bg-image"
             loading="lazy"
           />
           {% endif %}
-          <h2>
+          <h4>
             {{ card.title }}
             <em class="title-emphasis">{{ card.title_emphasis }}</em>
-          </h2>
+          </h4>
           <div class="content-text">
             {% for paragraph in card.paragraphs %}
-            <p>{{ paragraph }}</p>
+            <p class="medium">{{ paragraph }}</p>
             {% endfor %}
           </div>
         </div>
@@ -150,7 +149,7 @@ title: Home
 <section class="insights-section">
   <div class="container">
     <div class="insights-content">
-      <h6 class="section-label">INSIGHTS</h6>
+      <h7 class="section-label">INSIGHTS</h7>
       <div class="insights-title">
         <h2 class="">
           From <span class="highlight-green italic weak">research</span> to

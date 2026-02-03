@@ -9,7 +9,7 @@ module Jekyll
 
     def generate(site)
       Jekyll.logger.info "InsightsManifest:", "🚀 Starting generation"
-      
+
       cfg = site.config.fetch('insights_manifest', {})
       per_page = (cfg['per_page'] || 12).to_i
       output_dir = cfg['output_dir'] || 'assets/data/insights'
@@ -24,10 +24,10 @@ module Jekyll
 
       all_posts = site.posts.docs
       Jekyll.logger.info "InsightsManifest:", "📝 Total posts in site: #{all_posts.size}"
-      
+
       posts = all_posts.select { |doc| doc.data['published_in_blog'] != false }
       Jekyll.logger.info "InsightsManifest:", "✅ Posts after filter: #{posts.size}"
-      
+
       if posts.empty?
         Jekyll.logger.warn "InsightsManifest:", "⚠️  No posts found! Check 'published_in_blog' filter"
         return
@@ -42,7 +42,7 @@ module Jekyll
 
       grouped = group_by_category(posts)
       Jekyll.logger.info "InsightsManifest:", "📂 Found #{grouped.size} categories"
-      
+
       grouped.each do |slug, docs|
         Jekyll.logger.info "InsightsManifest:", "  - Category '#{slug}': #{docs.size} posts"
         write_manifests(site, docs, File.join(output_dir, 'categories'), per_page, "category-#{slug}", emit_ndjson, category: slug)
@@ -107,13 +107,13 @@ module Jekyll
       excerpt = doc.data['excerpt'] || doc.data['description'] || doc.content
       excerpt = strip_html_basic(excerpt.to_s)
       excerpt = excerpt.gsub(/\s+/, ' ').strip[0, 240]
-      Jekyll.logger.debug "Date: #{(doc.data['date'] || doc.date)&.strftime('%d %b %Y')}"
+      Jekyll.logger.debug "Date: #{(doc.data['date'] || doc.date)}"
       {
         'url' => doc.url,
         'title' => doc.data['title'],
         'excerpt' => excerpt,
-        'image' => doc.data['image'],
-        'date' => (doc.data['date'] || doc.date)&.strftime('%d %b %Y'),
+        'hero_image' => doc.data['hero_image'],
+        'date' => (doc.data['date'] || doc.date),
         'categories' => doc.data['categories'] || Array(doc.data['category']),
         'series' => doc.data['series'],
         'part' => doc.data['part']

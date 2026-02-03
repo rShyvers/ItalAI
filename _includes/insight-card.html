@@ -1,13 +1,16 @@
 <div class="insight-card">
   <div class="insight-card-image-wrapper">
     <a href="{{ include.post.url }}">
-      <img src="{{ include.post.image | default: '/assets/images/blog/cards/coming.webp' }}" alt="{{ include.post.title | default: 'Placeholder Title' }}" class="insight-card-image">
+      <img src="{{ include.post.hero_image | default: '/assets/images/blog/cards/coming.webp' }}" alt="{{ include.post.title | default: 'Placeholder Title' }}" class="insight-card-image">
     </a>
     <span class="insight-tag">{{ include.post.date | date: "%d %b %Y" }}</span>
   </div>
   <div class="insight-card-content">
     <a class="insight-card-title" href="{{ include.post.url }}">
-      <h3>{{ include.post.title }}</h3>
+        <h7>{{ include.post.title }}</h7>
+        <p class="insight-card-excerpt">
+            {{ include.post.excerpt | strip_html }}
+        </p>
     </a>
     <div class="insight-card-footer">
       <div class="insight-card-tags">
