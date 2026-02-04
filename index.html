@@ -195,66 +195,61 @@ description: "ItalAI - Where frontier AI research meets real-world impact. We bu
   </div>
 </section>
 <script>
-(function() {
-  const e = {
-    t: 0.15,
-    o: '0px 0px 100px 0px',
-    i: 'loading-screen',
-    s: 600
-  };
+(() => {
+  const t = new Map;
+  const e = (s) => document.querySelectorAll(s);
+  let n = false;
   
-  const n = new Map();
-  let a = false;
-  
-  const t = new IntersectionObserver((e) => {
-    e.forEach(({ isIntersecting: e, target: t }) => {
-      if (!e || !a) return;
+  const o = new IntersectionObserver((e) => {
+    e.forEach(({ isIntersecting: e, target: s }) => {
+      if (!e || !n) return;
       
-      const o = parseInt(t.dataset.delay, 10) || 0;
-      const i = setTimeout(() => {
-        t.classList.add('is-visible');
-        n.delete(t);
-        r.unobserve(t);
-      }, o);
+      const i = parseInt(s.dataset.delay, 10) || 0;
+      const r = setTimeout(() => {
+        s.classList.add('is-visible');
+        t.delete(s);
+        o.unobserve(s);
+      }, i);
       
-      n.set(t, i);
+      t.set(s, r);
     });
-  }, e);
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px 100px 0px'
+  });
   
-  const r = t;
-  
-  const c = (e) => {
-    const o = document.querySelectorAll(e);
-    if (o.length) {
-      o.forEach((e) => t.observe(e));
+  const s = (s) => {
+    const t = e(s);
+    if (t.length) {
+      t.forEach((t) => o.observe(t));
     }
-    a = true;
+    n = true;
   };
   
-  const s = () => {
-    const e = document.getElementById('loading-screen');
+  const i = () => {
+    const t = document.getElementById('loading-screen');
     
-    if (!e) {
-      c('.card-animated, .header-animated');
+    if (!t) {
+      s('.card-animated, .header-animated');
       return;
     }
     
-    const o = () => {
-      const e = document.getElementById('loading-screen');
-      if (!e) {
-        setTimeout(() => c('.card-animated, .header-animated'), 100);
+    const e = () => {
+      const t = document.getElementById('loading-screen');
+      if (!t) {
+        setTimeout(() => s('.card-animated, .header-animated'), 100);
       } else {
-        requestAnimationFrame(o);
+        requestAnimationFrame(e);
       }
     };
     
-    setTimeout(o, 600);
+    setTimeout(e, 600);
   };
   
   if (document.readyState === 'complete') {
-    s();
+    i();
   } else {
-    window.addEventListener('load', s, { once: true });
+    window.addEventListener('load', i, { once: true });
   }
 })();
 </script>
