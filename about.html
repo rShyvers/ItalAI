@@ -26,7 +26,7 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
         <img src="/assets/images/about.webp" alt="Who We Are" loading="lazy">
       </div>
       <div class="who-content">
-        <h7 class="section-label">WHO WE ARE</h7>
+        <div class="section-label">WHO WE ARE</div>
         <h2>
           A <span class="highlight-green italic weak">research-first</span><br>
           <span class="highlight-blue">AI</span> organization<span class="period">.</span>
@@ -79,7 +79,7 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
   <div class="container">
     <div class="values-content">
       <div class="values-header">
-        <h7 class="section-label">VALUES</h7>
+        <div class="section-label">VALUES</div>
         <h2 class="values-title">Our principles<span class="period">.</span></h2>
         <div class="values-header-row">
           <p class="values-intro">These principles guide how we research, design, and collaborate, independent of technologies or market cycles.</p>
@@ -96,8 +96,8 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
           {% for principle in site.data.principles.principles %}
             <div class="value-card">
               <div class="value-content">
-                <h2 class="value-number">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</h1>
-                <h5 class="value-card-title">{{ principle.title }}<span class="period">.</span></h3>
+                <div class="value-number h2-size">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</div>
+                <h3 class="value-card-title h5-size">{{ principle.title }}<span class="period">.</span></h3>
                 <p class="value-card-text">{{ principle.text }}</p>
               </div>
             </div>
@@ -114,11 +114,11 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
 <section class="partners-section">
   <div class="container">
     <div class="partners-content">
-      <h7 class="section-label">PARTNERSHIPS</h7>
-      <h3 class="partners-title uppercase">
+      <div class="section-label">PARTNERSHIPS</div>
+      <h2 class="partners-title uppercase h3-size">
         Advancing AI through<br>
         <span class="highlight-blue uppercase weak italic">global collaboration</span><span class="period">.</span>
-      </h3>
+      </h2>
       <div class="partner-container">
           <!-- Static Grid for Desktop -->
           <div class="partners-grid">
@@ -201,12 +201,12 @@ $(document).ready(function(){
         {% if forloop.index0 == 0 %}
           <div class="work-with-us-card">
             <div class="work-with-us-content">
-              <h7 class="section-label">TEAM</h7>
-              <h3>
+              <div class="section-label">TEAM</div>
+              <h2 class="h3-size">
                 Blending AI research<br>
                 and Industry<br>
                 Expertise<span class="period">.</span>
-              </h3>
+              </h2>
               <a class="cta-button" href="#contact">
                 WORK WITH US
               </a>
@@ -217,7 +217,7 @@ $(document).ready(function(){
 
         {% if forloop.index0 == 4 %}
           <div class="research-driven-card">
-            <h3 class="research-label highlight-green">Research<br>driven</h2>
+            <h3 class="research-label highlight-green h3-size">Research<br>driven</h3>
             <p class="large research-subtext strong">Team</p>
           </div>
           {% assign grid_points = grid_points | plus: 1 %}
@@ -252,7 +252,7 @@ $(document).ready(function(){
             >
           </div>
           <div class="person-info">
-            <h4 class="person-name">{{ person.name }}</h4>
+            <h3 class="person-name h5-size">{{ person.name }}</h3>
             <p class="person-role">{{ person.role }}{% if person.credentials %}, {{ person.credentials }}{% endif %}</p>
           </div>
         </div>

@@ -44,7 +44,7 @@ layout: default
       <aside class="post-sidebar">
         <!-- Post Categories -->
         <div class="sidebar-widget">
-          <h3 class="sidebar-title">TAGS</h3>
+          <h3 class="sidebar-title h3-size">TAGS</h3>
           <div class="category-tags">
             {% if page.categories %}
               {% for category in page.categories %}
@@ -58,7 +58,7 @@ layout: default
 
         <!-- Recent Posts -->
         <div class="sidebar-widget">
-          <h3 class="sidebar-title">RECENT POSTS</h3>
+          <h3 class="sidebar-title h3-size">RECENT POSTS</h3>
           <div class="recent-posts">
             {% comment %}
             Sort posts by date (descending), then by series and part number.
@@ -114,7 +114,7 @@ layout: default
           {% endif %}
         {% endfor %}
         <div class="post-author">
-          <h4>BY {{ author_name | upcase }}</h4>
+          <h4 class="h4-size">BY {{ author_name | upcase }}</h4>
           {% if author_data %}
             {% assign author_excerpt = author_data.excerpt | default: author_data.bio %}
             {% if author_excerpt %}

@@ -108,19 +108,17 @@ h3,
 h4,
 h5,
 h6,
-h7,
 a {
     font-family: var(--header-family);
-    letter-spacing: -6%;
 }
 h1,
 h2,
 h3,
 h4,
 h5,
-h6,
-h7 {
+h6 {
     margin: 1rem 0;
+    letter-spacing: -6%;
 }
 
 p,
@@ -146,4 +144,19 @@ h3 { font-size: var(--h3-size); }
 h4 { font-size: var(--h4-size); }
 h5 { font-size: var(--h5-size); }
 h6 { font-size: var(--h6-size); }
-h7 { font-size: var(--h7-size); }
+
+//Were Headers in Design, but aren't for accessibility reasons
+.size-base {
+    font-family: var(--header-family);
+    letter-spacing: -6%;
+    margin: 1rem 0;
+    font-weight: 800;
+}
+/* Font size utility classes for accessibility */
+.h1-size { @extend .size-base; font-size: var(--h1-size) !important; }
+.h2-size { @extend .size-base; font-size: var(--h2-size) !important; }
+.h3-size { @extend .size-base; font-size: var(--h3-size) !important; }
+.h4-size { @extend .size-base; font-size: var(--h4-size) !important; }
+.h5-size { @extend .size-base; font-size: var(--h5-size) !important; }
+.h6-size { @extend .size-base; font-size: var(--h6-size) !important; }
+.h7-size { @extend .size-base; font-size: var(--h7-size) !important; }

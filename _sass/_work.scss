@@ -66,6 +66,7 @@
 }
 
 .text-content {
+    margin: 0;
     position: relative;
     width: 100%;
 }
@@ -111,12 +112,10 @@
 
 .capability-number {
     margin: 0 0 1rem;
-    font-size: var(--h2-size);
 }
 
 .capability-title {
     margin: 0;
-    font-size: var(--h1-size);
 }
 
 .text-summary {

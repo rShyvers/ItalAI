@@ -24,6 +24,13 @@
     }
 }
 
+.who-content h2 {
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: var(--space-md);
+  color: var(--standard-dark);
+}
+
 .principle-light {
     background: var(--standard-green-alt);
 }
@@ -125,6 +132,7 @@
 }
 
 .value-number {
+  font-weight: 800;
   grid-column: 1;
   grid-row: 1;
   color: var(--standard-green-alt);

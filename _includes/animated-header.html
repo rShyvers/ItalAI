@@ -1,8 +1,9 @@
 {% assign delay = 0 %}
 {% assign heading_tag = include.tag | default: "h1" %}
+{% assign header_size = include.class | default: "" %}
 {% assign words = include.title | split: '|' %}
 
-<{{ heading_tag }}>
+<{{ heading_tag }} class="{{ header_size }}">
   {% for word_data in words %}
     {% assign parts = word_data | split: ',' %}
     {% assign word_text = parts[0] %}

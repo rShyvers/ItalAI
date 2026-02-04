@@ -117,7 +117,7 @@
 .mobile-nav {
     box-sizing: border-box;
     overflow: scroll;
-    display: flex;
+    display: none;
     position: fixed;
     top: 0;
     right: 0;
@@ -165,6 +165,7 @@
 
 /* Show menu when checkbox is checked */
 .menu-toggle:checked ~ .mobile-nav {
+    display: flex;
     transform: translateX(0);
 }
 

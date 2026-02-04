@@ -192,7 +192,7 @@
     z-index: 2;
 }
 
-.common-hero-content h2 {
+.common-hero-content h1 {
     font-weight: 800;
     line-height: 1.2;
     margin: auto 0;
@@ -211,7 +211,7 @@
     z-index: 2;
 }
 
-.breadcrumb span {
+.breadcrumb span:not(.strong) {
     font-weight: 400;
 }
 
@@ -233,6 +233,7 @@
 
 .section-label {
     font-family: var(--header-family);
+    font-size: var(--h7-size);
     text-transform: uppercase;
     color: var(--standard-green);
 }
@@ -272,7 +273,7 @@
 
 strong,
 .strong {
-    font-weight: 700;
+    font-weight: 800;
 }
 weak,
 .weak {
@@ -283,6 +284,11 @@ weak,
 }
 .lowercase {
     text-transform: lowercase;
+}
+
+.emphasis {
+  color: var(--standard-blue);
+  font-weight: 600;
 }
 
 /* Universal Animations */

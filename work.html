@@ -27,8 +27,8 @@ Turning research into<br>
         <img src="/assets/images/work.webp" alt="What We Focus On" loading="lazy">
       </div>
       <div class="focus-content">
-        <h7 class="section-label">WHAT WE FOCUS ON</h7>
-      <h3>
+      <div class="section-label">WHAT WE FOCUS ON</div>
+      <h2 class="h3-size">
         What we focus on<span class="period">.</span>
       </h3>
       <p class="small description">
@@ -47,26 +47,26 @@ Turning research into<br>
 <section class="capabilities-section">
     <div class="container">
         <div class="capabilities-content">
-            <h7 class="section-label">WHAT WE BUILD</h7>
-            <h3>
+            <div class="section-label">WHAT WE BUILD</div>
+            <h2 class="h3-size">
                 CORE RESEARCH AND<br>
                 SYSTEM CAPABILITIES<span class="period">.</span>
-            </h3>
+            </h2>
             <div class="capabilities-list">
             {% for capability in site.data.capabilities %}
             <details class="capability-item">
                 <summary class="capability-summary">
                 <span class="text-wrapper">
-                    <span class="text-content">
+                    <h3 class="text-content" aria-label="{{ capability.title }}">
                       <span class="text-light">
-                          <h3 class="capability-number">{{ capability.number }}</h3>
-                          <h1 class="capability-title weak">{{ capability.title }}</h1>
+                          <div class="capability-number h2-size">{{ capability.number }}</div>
+                          <div class="capability-title weak h1-size">{{ capability.title }}</div>
                       </span>
                       <span class="text-dark">
-                          <h3 class="capability-number">{{ capability.number }}</h3>
-                          <h1 class="capability-title weak">{{ capability.title }}</h1>
+                          <div class="capability-number h2-size">{{ capability.number }}</div>
+                          <div class="capability-title weak h1-size">{{ capability.title }}</div>
                       </span>
-                    </span>
+                    </h3>
                 </span>
                 </summary>
                 <div class="capability-details">
@@ -81,9 +81,9 @@ Turning research into<br>
                         <p class="small paper-topic">{{ paper.topic }}</p>
                     </div>
                     <div class="paper-content-col">
-                        <h5 class="paper-title">
+                        <div class="paper-title h5-size">
                           <a href="{{ paper.link }}">{{ paper.title }}</a>
-                        </h5>
+                        </div>
                         <p class="paper-description">{{ paper.description }}</p>
                     </div>
                     </div>
@@ -91,7 +91,7 @@ Turning research into<br>
                 </div>
                 {% else %}
                 <div class="text-summary">
-                    <h3 class="capability-number" style="height: 1px; opacity: 0;">{{ capability.number }}</h3>
+                    <div class="capability-number h2-size" style="height: 1px; opacity: 0;">{{ capability.number }}</div>
                     <span>
                       {{ capability.content | markdownify | replace: '<p>', '<p class="medium capability-text" style="">' }}
                     </span>
