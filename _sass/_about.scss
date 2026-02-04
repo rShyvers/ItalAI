@@ -77,6 +77,37 @@
 .values-content {
   padding: 4rem 2rem 2rem;
   color: var(--standard-light);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--standard-dark);
+    opacity: 0.65;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+  }
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+  > * {
+    position: relative;
+    z-index: 2;
+  }
 }
 
 .values-header {
