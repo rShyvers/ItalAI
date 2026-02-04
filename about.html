@@ -125,9 +125,11 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
               {% assign partner_files = site.static_files | where: "extname", ".webp" %}
               {% for file in partner_files %}
                   {% if file.path contains "/assets/images/partners/" %}
+                  {% unless file.path contains "w.webp" %}
               <div class="partner-card">
                   <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
               </div>
+                  {% endunless %}
                   {% endif %}
               {% endfor %}
           </div>
@@ -137,9 +139,11 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
               {% assign partner_files = site.static_files | where: "extname", ".webp" %}
               {% for file in partner_files %}
                   {% if file.path contains "/assets/images/partners/" %}
+                  {% unless file.path contains "w.webp" %}
               <div class="partner-card">
                   <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
               </div>
+                  {% endunless %}
                   {% endif %}
               {% endfor %}
           </div>

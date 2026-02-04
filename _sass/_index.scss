@@ -186,12 +186,40 @@
 .why-content {
     padding: 0 2rem;
 }
+
+.revolution-tabs {
+    // Container for radio inputs, labels, and cards
+}
+
 .tag-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(max-content, 1fr));
     grid-template-rows: repeat(auto, auto);
     gap: 1rem;
 }
+
+// Hide radio inputs
+.tag-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+// Style labels as buttons
+.tag-radio + .tag-button {
+    cursor: pointer;
+}
+
+// Selected state via :checked - target labels
+#tab-robotics:checked ~ .tag-grid label[for="tab-robotics"],
+#tab-ai-scale:checked ~ .tag-grid label[for="tab-ai-scale"],
+#tab-industry-transformation:checked ~ .tag-grid label[for="tab-industry-transformation"],
+#tab-research-acceleration:checked ~ .tag-grid label[for="tab-research-acceleration"] {
+    background: var(--blue-blue);
+    color: var(--standard-light);
+    box-shadow: 0 4px 19.3px 0 var(--standard-blue);
+}
+
 .content-cards {
     position: relative;
 }
@@ -206,11 +234,6 @@
     padding: var(--space-2xl);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: opacity var(--transition-base);
-
-    &.active {
-        display: block;
-        opacity: 1;
-    }
 
     &::before {
         content: "";
@@ -255,6 +278,15 @@
         opacity: 0.9;
         margin-bottom: 0;
     }
+}
+
+// Show cards based on checked radio buttons
+#tab-robotics:checked ~ .content-cards #card-robotics,
+#tab-ai-scale:checked ~ .content-cards #card-ai-scale,
+#tab-industry-transformation:checked ~ .content-cards #card-industry-transformation,
+#tab-research-acceleration:checked ~ .content-cards #card-research-acceleration {
+    display: block;
+    opacity: 1;
 }
 
 .insights-section {

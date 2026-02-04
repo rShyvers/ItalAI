@@ -106,43 +106,55 @@ description: "ItalAI - Where frontier AI research meets real-world impact. We bu
         ><br/>
         has begun<span class="period">.</span>
       </h2>
-      <nav class="tag-grid">
+      <div class="revolution-tabs">
         {% for card in site.data.revolution-cards %}
-        <button
-          class="tag-button {% if forloop.first %}selected{% endif %}"
-          data-target="{{ card.id }}"
-          type="button"
-          aria-label="Show {{ card.title_short }}"
-        >
-          {{ card.title_short }}
-        </button>
+        <input
+          type="radio"
+          name="revolution-card"
+          id="tab-{{ card.id }}"
+          class="tag-radio"
+          {% if forloop.first %}checked{% endif %}
+        />
         {% endfor %}
-      </nav>
-      <div class="content-cards">
-        {% for card in site.data.revolution-cards %}
-        <div
-          class="content-card {% if forloop.first %}active{% endif %}"
-          data-card="{{ card.id }}"
-        >
-          {% if card.background_image != "" %}
-          <img
-            src="{{ card.background_image }}"
-            alt=""
-            class="content-card-bg-image"
-            loading="lazy"
-          />
-          {% endif %}
-          <h4>
-            {{ card.title }}
-            <em class="title-emphasis">{{ card.title_emphasis }}</em>
-          </h4>
-          <div class="content-text">
-            {% for paragraph in card.paragraphs %}
-            <p class="medium">{{ paragraph }}</p>
-            {% endfor %}
+        
+        <nav class="tag-grid">
+          {% for card in site.data.revolution-cards %}
+          <label
+            for="tab-{{ card.id }}"
+            class="tag-button"
+            aria-label="Show {{ card.title_short }}"
+          >
+            {{ card.title_short }}
+          </label>
+          {% endfor %}
+        </nav>
+        
+        <div class="content-cards">
+          {% for card in site.data.revolution-cards %}
+          <div
+            class="content-card"
+            id="card-{{ card.id }}"
+          >
+            {% if card.background_image != "" %}
+            <img
+              src="{{ card.background_image }}"
+              alt=""
+              class="content-card-bg-image"
+              loading="lazy"
+            />
+            {% endif %}
+            <h4>
+              {{ card.title }}
+              <em class="title-emphasis">{{ card.title_emphasis }}</em>
+            </h4>
+            <div class="content-text">
+              {% for paragraph in card.paragraphs %}
+              <p class="medium">{{ paragraph }}</p>
+              {% endfor %}
+            </div>
           </div>
+          {% endfor %}
         </div>
-        {% endfor %}
       </div>
     </div>
     <a class="cta-center cta-button-alt" href="/roadmap">SEE WHERE WE ARE GOING</a>
@@ -156,8 +168,8 @@ description: "ItalAI - Where frontier AI research meets real-world impact. We bu
       <div class="insights-title">
         <h2 class="">
           From <span class="highlight-green italic weak">research</span> to
-          <span class="highlight-blue italic weak">reality</span>
-          <span class="period">.</span>
+          <span class="word highlight-blue italic weak">reality<span class="period">.</span></span>
+          
         </h2>
         <a class="cta-button-alt" href="/insights" aria-label="View all insights articles">READ MORE</a>
       </div>
@@ -182,5 +194,67 @@ description: "ItalAI - Where frontier AI research meets real-world impact. We bu
     </div>
   </div>
 </section>
-<script src="/assets/js/revolution-cards.js" defer></script>
-<script src="/assets/js/animation-observer.js"></script>
+<script>
+(function() {
+  const e = {
+    t: 0.15,
+    o: '0px 0px 100px 0px',
+    i: 'loading-screen',
+    s: 600
+  };
+  
+  const n = new Map();
+  let a = false;
+  
+  const t = new IntersectionObserver((e) => {
+    e.forEach(({ isIntersecting: e, target: t }) => {
+      if (!e || !a) return;
+      
+      const o = parseInt(t.dataset.delay, 10) || 0;
+      const i = setTimeout(() => {
+        t.classList.add('is-visible');
+        n.delete(t);
+        r.unobserve(t);
+      }, o);
+      
+      n.set(t, i);
+    });
+  }, e);
+  
+  const r = t;
+  
+  const c = (e) => {
+    const o = document.querySelectorAll(e);
+    if (o.length) {
+      o.forEach((e) => t.observe(e));
+    }
+    a = true;
+  };
+  
+  const s = () => {
+    const e = document.getElementById('loading-screen');
+    
+    if (!e) {
+      c('.card-animated, .header-animated');
+      return;
+    }
+    
+    const o = () => {
+      const e = document.getElementById('loading-screen');
+      if (!e) {
+        setTimeout(() => c('.card-animated, .header-animated'), 100);
+      } else {
+        requestAnimationFrame(o);
+      }
+    };
+    
+    setTimeout(o, 600);
+  };
+  
+  if (document.readyState === 'complete') {
+    s();
+  } else {
+    window.addEventListener('load', s, { once: true });
+  }
+})();
+</script>

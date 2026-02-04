@@ -57,7 +57,12 @@
     }
 }
 
-/* Hamburger */
+/* CSS-only hamburger menu */
+.menu-toggle {
+    display: none; /* Hide the checkbox */
+}
+
+/* Hamburger button */
 .hamburger {
     display: none;
     flex-direction: column;
@@ -76,57 +81,55 @@
     transition: transform 0.3s ease, opacity 0.2s ease;
 }
 
-/* Animate to X */
-.hamburger.active span:nth-child(1) {
+/* Animate to X when checked */
+.menu-toggle:checked ~ .hamburger span:nth-child(1) {
     transform: translateY(9px) rotate(45deg);
 }
 
-.hamburger.active span:nth-child(2) {
+.menu-toggle:checked ~ .hamburger span:nth-child(2) {
     opacity: 0;
 }
 
-.hamburger.active span:nth-child(3) {
+.menu-toggle:checked ~ .hamburger span:nth-child(3) {
     transform: translateY(-9px) rotate(-45deg);
 }
 
+/* Overlay */
 .overlay {
     display: none;
-    &.active {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--standard-dark);
-        opacity: 0.65;
-        padding: 4rem 2rem 2rem;
-        z-index: 800;
-    }
+    pointer-events: none;
+}
+
+.menu-toggle:checked ~ .overlay {
+    display: block;
+    pointer-events: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--standard-dark);
+    opacity: 0.65;
+    z-index: 800;
+    cursor: pointer;
 }
 
 .mobile-nav {
     box-sizing: border-box;
     overflow: scroll;
-    display: none;
+    display: flex;
     position: fixed;
     top: 0;
     right: 0;
-    width: 280px; // Adjust width as needed
+    width: 280px;
     height: 100vh;
-    background-color: var(--standard-dark); // Adjust to match your design
+    background-color: var(--standard-dark);
     z-index: 801;
     transform: translateX(100%);
     transition: transform 0.3s ease;
-
-    &.active {
-        display: flex;
-        transform: translateX(0);
-    }
-
     flex-direction: column;
     justify-content: space-between;
-    padding: 80px 30px 40px; // Top padding accounts for navbar height
+    padding: 80px 30px 40px;
 
     ul {
         list-style: none;
@@ -138,7 +141,7 @@
 
             a {
                 text-decoration: none;
-                color: var(--standard-light); // Adjust to match your design
+                color: var(--standard-light);
                 display: block;
                 padding: 10px 0;
 
@@ -157,5 +160,17 @@
         text-align: center;
         padding: 12px 24px;
         display: block;
+    }
+}
+
+/* Show menu when checkbox is checked */
+.menu-toggle:checked ~ .mobile-nav {
+    transform: translateX(0);
+}
+
+/* Prevent body scroll when menu is open */
+.menu-toggle:checked ~ * {
+    body {
+        overflow: hidden;
     }
 }

@@ -7,6 +7,9 @@
 
 {% seo %}
 
+<!-- Critical CSS - Compiled from SCSS and inlined -->
+<style>{% capture critical_css %}{% include critical.scss %}{% endcapture %}{{ critical_css | strip }}</style>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -26,11 +29,12 @@
 {% else %}
   {% assign stylesheet = page.url | remove: '/' | default: 'index' %}
 {% endif %}
-<link rel="stylesheet" href="/assets/css/{{ stylesheet }}.css">
+<!-- Load full stylesheet asynchronously -->
+<link rel="preload" href="/assets/css/{{ stylesheet }}.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/assets/css/{{ stylesheet }}.css"></noscript>
 </head>
 <body class="no-js">
     {% include loading-screen.html %}
-    {% include warning.html %}
     {% include header.html %}
     {{ content }}
     {% include footer.html %}
