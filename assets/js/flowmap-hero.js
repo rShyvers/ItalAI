@@ -73,6 +73,9 @@ function flowmap_deformation() {
                 }
                 mesh.program.uniforms.res.value = new Vec4(box.offsetWidth, box.offsetHeight, a1, a2);
                 renderer.setSize(box.offsetWidth, box.offsetHeight);
+                // Force CSS sizing to remain 100% even though canvas attributes are pixel-based
+                gl.canvas.style.width = '100%';
+                gl.canvas.style.height = '100%';
                 aspect = box.offsetWidth / box.offsetHeight;
             }
 

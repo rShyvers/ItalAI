@@ -86,7 +86,7 @@
     
     Our work spans the _full stack_: from data pipelines and learning architectures to deployment constraints, compute efficiency, and long-term maintainability. 
     
-    We focus on how components interact in _real settings_ — where perception, decision-making, and learning must operate together under latency, reliability, and safety constraints. 
+    We focus on how components interact in real settings — where perception, decision-making, and learning must operate together under latency, reliability, and safety constraints. 
     
     **This approach allows us to build AI systems that are not only performant in controlled environments, but stable and scalable in production.**
 

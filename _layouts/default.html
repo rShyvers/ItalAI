@@ -34,7 +34,10 @@
 <noscript><link rel="stylesheet" href="/assets/css/{{ stylesheet }}.css"></noscript>
 </head>
 <body class="no-js">
-    <script src="/assets/js/js-check.js"></script>
+    <script>
+      document.body.classList.remove('no-js'); 
+      document.body.classList.add('js');
+    </script>
     {% include loading-screen.html %}
     {% include header.html %}
     {{ content }}
