@@ -20,42 +20,24 @@ module ItalAI
       warn "[vips-webp] Responsive images must be pre-generated locally or in CI"
       return
     else
-      # Try to load parallel gem for faster processing
-      begin
-        require "parallel"
-        @parallel_available = true
-      rescue LoadError
-        @parallel_available = false
-      end
-
       # Only process source images - Jekyll will copy them to _site
       image_dir = File.join(site.source, "assets", "images")
       return unless Dir.exist?(image_dir)
 
       @cache_manifest_path = File.join(site.source, CACHE_FILENAME)
       @cache_manifest = load_cache_manifest
-      @cache_mutex = Mutex.new if @parallel_available
       
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
       end
       
-      process_images(paths)
-      save_cache_manifest
-    end
-
-    def self.process_images(paths)
-      if @parallel_available && paths.length > 3
-        # Use parallel processing for better performance
-        Parallel.each(paths, in_processes: [Parallel.processor_count, 4].min) do |path|
-          generate_responsive_images(path)
-        end
-      else
-        # Fall back to sequential processing
-        paths.each do |path|
-          generate_responsive_images(path)
-        end
+      # Process sequentially to avoid cache issues
+      # Parallel processing doesn't work well with shared cache state
+      paths.each do |path|
+        generate_responsive_images(path)
       end
+      
+      save_cache_manifest
     end
 
     def self.generate_responsive_images(path)
@@ -65,20 +47,22 @@ module ItalAI
         # Calculate fingerprint first
         fingerprint = Digest::SHA256.file(path).hexdigest
         
-        # Load image to get width
+        # Check cache before loading image (more efficient)
+        cache_entry = @cache_manifest[path]
+        if cache_entry && cache_entry["sha256"] == fingerprint
+          # Verify outputs still exist
+          if outputs_present?(base_path, cache_entry["width"])
+            puts "[vips-webp] ✓ #{File.basename(path)} (cached)"
+            return
+          else
+            puts "[vips-webp] ⚠ #{File.basename(path)} (cache stale, regenerating)"
+          end
+        end
+
+        # Load image
         image = Vips::Image.new_from_file(path, access: :random)
         image = image.autorot if image.respond_to?(:autorot)
         original_width = image.width
-
-        # Check cache
-        cache_entry = @cache_manifest[path]
-        if cache_entry && 
-           cache_entry["sha256"] == fingerprint && 
-           cache_entry["width"] == original_width &&
-           outputs_present?(base_path, original_width)
-          puts "[vips-webp] skipping #{File.basename(path)} (cached)"
-          return
-        end
 
         # Generate the base .webp file (for src attribute)
         base_webp_path = "#{base_path}.webp"
@@ -94,6 +78,7 @@ module ItalAI
         end
 
         # Generate responsive sizes (for srcset attribute)
+        generated_sizes = []
         SIZES.each do |width|
           next if width > original_width
           
@@ -104,6 +89,7 @@ module ItalAI
           # Verify the file was created successfully
           if File.exist?(webp_path) && File.size(webp_path) > 0
             puts "[vips-webp] #{File.basename(path)} -> #{File.basename(webp_path)}"
+            generated_sizes << width
           else
             File.delete(webp_path) if File.exist?(webp_path)
             warn "[vips-webp] failed to generate #{File.basename(webp_path)} - file is empty"
@@ -112,20 +98,12 @@ module ItalAI
 
         cleanup_stale_responsive_images(base_path, original_width)
 
-        # Update cache (with mutex for parallel processing)
-        update_cache = lambda do
-          @cache_manifest[path] = {
-            "sha256" => fingerprint,
-            "width" => original_width,
-            "sizes" => SIZES.select { |w| w <= original_width }
-          }
-        end
-
-        if @parallel_available
-          @cache_mutex.synchronize(&update_cache)
-        else
-          update_cache.call
-        end
+        # Update cache
+        @cache_manifest[path] = {
+          "sha256" => fingerprint,
+          "width" => original_width,
+          "sizes" => generated_sizes
+        }
       rescue StandardError => e
         warn "[vips-webp] failed on #{path}: #{e.message}"
       end
@@ -135,8 +113,8 @@ module ItalAI
       base_webp_path = "#{base_path}.webp"
       return false unless File.exist?(base_webp_path) && File.size(base_webp_path) > 0
 
-      SIZES.each do |width|
-        next if width > original_width
+      expected_sizes = SIZES.select { |w| w <= original_width }
+      expected_sizes.each do |width|
         webp_path = "#{base_path}-#{width}w.webp"
         return false unless File.exist?(webp_path) && File.size(webp_path) > 0
       end
