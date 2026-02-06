@@ -29,7 +29,8 @@ module ItalAI
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
       end
       
-      puts "[vips-webp] Found #{paths.size} source images to process"
+      Thread.current[:webp_worker_id] = "main"
+      log_info "Found #{paths.size} source images to process"
       
       worker_count = ENV.fetch("WEBP_WORKERS", [Etc.nprocessors, 2].min).to_i
       worker_count = 1 if worker_count < 1
@@ -39,15 +40,15 @@ module ItalAI
           generate_responsive_images(path)
         end
       else
-        queue = Queue.new
-        paths.each { |path| queue << path }
+        buckets = Array.new(worker_count) { [] }
+        paths.each_with_index do |path, index|
+          buckets[index % worker_count] << path
+        end
 
-        workers = Array.new(worker_count) do
+        workers = buckets.map.with_index do |bucket, index|
           Thread.new do
-            loop do
-              path = queue.pop(true) rescue nil
-              break unless path
-
+            Thread.current[:webp_worker_id] = "worker-#{index + 1}"
+            bucket.each do |path|
               generate_responsive_images(path)
             end
           end
@@ -70,7 +71,7 @@ module ItalAI
           if base_output_fresh?(base_path, source_mtime)
             original_width = read_image_width(path)
             if outputs_fresh?(base_path, source_mtime, original_width)
-              puts "[vips-webp] ✓ #{File.basename(path)} (fresh outputs)"
+              log_info "✓ #{File.basename(path)} (fresh outputs)"
               return
             end
           end
@@ -88,10 +89,10 @@ module ItalAI
         base_webp_path = "#{base_path}.webp"
         image.webpsave(base_webp_path, **SAVE_OPTIONS)
         if File.size?(base_webp_path)
-          puts "[vips-webp] #{File.basename(path)} -> #{File.basename(base_webp_path)}"
+          log_info "#{File.basename(path)} -> #{File.basename(base_webp_path)}"
         else
           File.delete(base_webp_path) if File.exist?(base_webp_path)
-          warn "[vips-webp] failed to generate #{File.basename(base_webp_path)} - file is empty"
+          log_warn "failed to generate #{File.basename(base_webp_path)} - file is empty"
           return
         end
 
@@ -105,14 +106,14 @@ module ItalAI
           
           # Verify the file was created successfully
           if File.size?(webp_path)
-            puts "[vips-webp] #{File.basename(path)} -> #{File.basename(webp_path)}"
+            log_info "#{File.basename(path)} -> #{File.basename(webp_path)}"
           else
             File.delete(webp_path) if File.exist?(webp_path)
-            warn "[vips-webp] failed to generate #{File.basename(webp_path)} - file is empty"
+            log_warn "failed to generate #{File.basename(webp_path)} - file is empty"
           end
         end
       rescue StandardError => e
-        warn "[vips-webp] failed on #{path}: #{e.message}"
+        log_warn "failed on #{path}: #{e.message}"
       end
     end
 
@@ -158,7 +159,7 @@ module ItalAI
 
       true
     rescue StandardError => e
-      warn "[vips-webp] failed to check freshness for #{File.basename(base_path)}: #{e.message}"
+      log_warn "failed to check freshness for #{File.basename(base_path)}: #{e.message}"
       false
     end
 
@@ -171,10 +172,10 @@ module ItalAI
         next if File.size?(webp_path)
 
         File.delete(webp_path)
-        puts "[vips-webp] removed empty #{File.basename(webp_path)}"
+        log_info "removed empty #{File.basename(webp_path)}"
       end
     rescue StandardError => e
-      warn "[vips-webp] failed to clean empty outputs for #{File.basename(base_path)}: #{e.message}"
+      log_warn "failed to clean empty outputs for #{File.basename(base_path)}: #{e.message}"
     end
 
     def self.cleanup_stale_responsive_images(base_path, original_width)
@@ -195,10 +196,20 @@ module ItalAI
         next if expected_sizes.include?(width)
 
         File.delete(webp_path)
-        puts "[vips-webp] removed stale #{File.basename(webp_path)}"
+        log_info "removed stale #{File.basename(webp_path)}"
       end
     rescue StandardError => e
-      warn "[vips-webp] failed to clean stale images for #{File.basename(base_path)}: #{e.message}"
+      log_warn "failed to clean stale images for #{File.basename(base_path)}: #{e.message}"
+    end
+
+    def self.log_info(message)
+      worker = Thread.current[:webp_worker_id] || "main"
+      puts "[vips-webp][#{worker}] #{message}"
+    end
+
+    def self.log_warn(message)
+      worker = Thread.current[:webp_worker_id] || "main"
+      warn "[vips-webp][#{worker}] #{message}"
     end
 
   end
