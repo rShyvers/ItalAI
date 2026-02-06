@@ -28,6 +28,10 @@ module ItalAI
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
       end
+      paths = paths.uniq
+
+      @path_locks_mutex = Mutex.new
+      @path_locks = {}
       
       Thread.current[:webp_worker_id] = "main"
       log_info "Found #{paths.size} source images to process"
@@ -61,60 +65,70 @@ module ItalAI
 
     def self.generate_responsive_images(path)
       base_path = path.sub(/\.(jpe?g|png)\z/i, "")
-      
-      begin
-        source_mtime = File.mtime(path)
 
-        # Fast path: if outputs exist and are newer than source, skip entirely
-        unless @force_regen
-          cleanup_zero_outputs(base_path)
-          if base_output_fresh?(base_path, source_mtime)
-            original_width = read_image_width(path)
-            if outputs_fresh?(base_path, source_mtime, original_width)
-              log_info "✓ #{File.basename(path)} (fresh outputs)"
-              return
+      with_path_lock(base_path) do
+        begin
+          source_mtime = File.mtime(path)
+
+          # Fast path: if outputs exist and are newer than source, skip entirely
+          unless @force_regen
+            cleanup_zero_outputs(base_path)
+            if base_output_fresh?(base_path, source_mtime)
+              original_width = read_image_width(path)
+              if outputs_fresh?(base_path, source_mtime, original_width)
+                log_info "✓ #{File.basename(path)} (fresh outputs)"
+                return
+              end
             end
           end
-        end
 
-        # Load image for processing
-        image = Vips::Image.new_from_file(path, access: :random)
-        image = image.autorot if image.respond_to?(:autorot)
-        original_width = image.width
+          # Load image for processing
+          image = Vips::Image.new_from_file(path, access: :random)
+          image = image.autorot if image.respond_to?(:autorot)
+          original_width = image.width
 
-        # Clean up any stale files BEFORE generating new ones
-        cleanup_stale_responsive_images(base_path, original_width)
+          # Clean up any stale files BEFORE generating new ones
+          cleanup_stale_responsive_images(base_path, original_width)
 
-        # Generate the base .webp file (for src attribute)
-        base_webp_path = "#{base_path}.webp"
-        image.webpsave(base_webp_path, **SAVE_OPTIONS)
-        if File.size?(base_webp_path)
-          log_info "#{File.basename(path)} -> #{File.basename(base_webp_path)}"
-        else
-          File.delete(base_webp_path) if File.exist?(base_webp_path)
-          log_warn "failed to generate #{File.basename(base_webp_path)} - file is empty"
-          return
-        end
-
-        # Generate responsive sizes (for srcset attribute)
-        SIZES.each do |width|
-          next if width > original_width
-          
-          webp_path = "#{base_path}-#{width}w.webp"
-          resized = image.thumbnail_image(width)
-          resized.webpsave(webp_path, **SAVE_OPTIONS)
-          
-          # Verify the file was created successfully
-          if File.size?(webp_path)
-            log_info "#{File.basename(path)} -> #{File.basename(webp_path)}"
+          # Generate the base .webp file (for src attribute)
+          base_webp_path = "#{base_path}.webp"
+          image.webpsave(base_webp_path, **SAVE_OPTIONS)
+          if File.size?(base_webp_path)
+            log_info "#{File.basename(path)} -> #{File.basename(base_webp_path)}"
           else
-            File.delete(webp_path) if File.exist?(webp_path)
-            log_warn "failed to generate #{File.basename(webp_path)} - file is empty"
+            File.delete(base_webp_path) if File.exist?(base_webp_path)
+            log_warn "failed to generate #{File.basename(base_webp_path)} - file is empty"
+            return
           end
+
+          # Generate responsive sizes (for srcset attribute)
+          SIZES.each do |width|
+            next if width > original_width
+            
+            webp_path = "#{base_path}-#{width}w.webp"
+            resized = image.thumbnail_image(width)
+            resized.webpsave(webp_path, **SAVE_OPTIONS)
+            
+            # Verify the file was created successfully
+            if File.size?(webp_path)
+              log_info "#{File.basename(path)} -> #{File.basename(webp_path)}"
+            else
+              File.delete(webp_path) if File.exist?(webp_path)
+              log_warn "failed to generate #{File.basename(webp_path)} - file is empty"
+            end
+          end
+        rescue StandardError => e
+          log_warn "failed on #{path}: #{e.message}"
         end
-      rescue StandardError => e
-        log_warn "failed on #{path}: #{e.message}"
       end
+    end
+
+    def self.with_path_lock(base_path)
+      lock = @path_locks_mutex.synchronize do
+        @path_locks[base_path] ||= Mutex.new
+      end
+
+      lock.synchronize { yield }
     end
 
     def self.base_output_fresh?(base_path, source_mtime)
