@@ -24,9 +24,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-env:
-  PRODUCTION_URL: https://italailabs.com
-
 jobs:
   # Build job
   build:

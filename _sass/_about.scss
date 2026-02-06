@@ -36,6 +36,8 @@
 .principle-dark {
   background: var(--standard-dark);
   position: relative;
+  overflow: hidden;
+  
   &::before {
     content: '';
     position: absolute;
@@ -101,8 +103,6 @@
 .values-content {
   padding: 4rem 2rem 2rem;
   color: var(--standard-light);
-  position: relative;
-  overflow: hidden;
 
   > * {
     position: relative;

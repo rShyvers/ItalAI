@@ -208,16 +208,6 @@
     cursor: pointer;
 }
 
-// Selected state via :checked - target labels
-#tab-robotics:checked ~ .tag-grid label[for="tab-robotics"],
-#tab-ai-scale:checked ~ .tag-grid label[for="tab-ai-scale"],
-#tab-industry-transformation:checked ~ .tag-grid label[for="tab-industry-transformation"],
-#tab-research-acceleration:checked ~ .tag-grid label[for="tab-research-acceleration"] {
-    background: var(--blue-blue);
-    color: var(--standard-light);
-    box-shadow: 0 4px 19.3px 0 var(--standard-blue);
-}
-
 .content-cards {
     position: relative;
 }
@@ -281,14 +271,6 @@
     }
 }
 
-// Show cards based on checked radio buttons
-#tab-robotics:checked ~ .content-cards #card-robotics,
-#tab-ai-scale:checked ~ .content-cards #card-ai-scale,
-#tab-industry-transformation:checked ~ .content-cards #card-industry-transformation,
-#tab-research-acceleration:checked ~ .content-cards #card-research-acceleration {
-    display: block;
-    opacity: 1;
-}
 
 .insights-section {
     padding: 8rem 0 2rem;

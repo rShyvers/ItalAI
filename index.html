@@ -161,6 +161,24 @@ description: "ItalAI - Where frontier AI research meets real-world impact. We bu
     <a class="cta-center cta-button-alt" href="/roadmap">SEE WHERE WE ARE GOING</a>
   </div>
 </section>
+<style>
+  /* Selected state via :checked - target labels */
+  {% for card in site.data.revolution-cards %}
+  #tab-{{ card.id }}:checked ~ .tag-grid label[for="tab-{{ card.id }}"]{% if forloop.last %} { {% else %},{% endif %}
+  {% endfor %}
+    background: var(--blue-blue);
+    color: var(--standard-light);
+    box-shadow: 0 4px 19.3px 0 var(--standard-blue);
+  }
+  
+  /* Show cards based on checked radio buttons */
+  {% for card in site.data.revolution-cards %}
+  #tab-{{ card.id }}:checked ~ .content-cards #card-{{ card.id }}{% if forloop.last %} { {% else %},{% endif %}
+  {% endfor %}
+    display: block;
+    opacity: 1;
+  }
+</style>
 
 <section class="insights-section">
   <div class="container">
