@@ -45,8 +45,10 @@ jobs:
       - name: Cache generated WebP images
         uses: actions/cache@v4
         with:
-          path: assets/images/**/*.webp
-          key: ${{ runner.os }}-webp-${{ hashFiles('assets/images/**/*.jpg', 'assets/images/**/*.jpeg', 'assets/images/**/*.png', 'assets/images/**/*.gif') }}-v2
+          path: |
+            assets/images/**/*.webp
+            .webp-cache.json
+          key: ${{ runner.os }}-webp-${{ hashFiles('assets/images/**/*.jpg', 'assets/images/**/*.jpeg', 'assets/images/**/*.png', 'assets/images/**/*.gif', '.webp-cache.json') }}-v3
           restore-keys: |
             ${{ runner.os }}-webp-
       
