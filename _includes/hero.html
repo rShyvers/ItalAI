@@ -4,16 +4,29 @@
          data-flowmap-url="{{ include.bg_image }}" 
          data-flowmap-width="1880" 
          data-flowmap-height="789">
+    
     {% if include.bg_image %}
+    <!-- Pre-inserted flowmap wrapper -->
+    <div class="flowmap-deformation-wrapper" 
+         data-bg="{{ include.bg_image }}"
+         data-bg-width="1880" 
+         data-bg-height="789">
+        <!-- Canvas will be inserted here by OGL -->
+    </div>
+    
+    <!-- Fallback for no-JS users -->
+    <noscript>
         <img src="{{ include.bg_image }}" alt="" loading="eager" fetchpriority="high">
+    </noscript>
     {% endif %}
+    
     <div class="container">
         <div class="main-hero-content">
             {% include animated-header.html title=include.title %}
             {% if include.subtitle %}
-                <p class="large highlight-green-alt italic">
-                    {{ include.subtitle }}
-                </p>
+            <p class="large highlight-green-alt italic">
+                {{ include.subtitle }}
+            </p>
             {% endif %}
             <a class="cta-button-alt" href="/about">{{ include.cta_text }}</a>
         </div>
