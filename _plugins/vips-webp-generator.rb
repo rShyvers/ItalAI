@@ -13,9 +13,9 @@ module ItalAI
 
     def self.run(site)
       require "vips"
-      require "etc"
+      require "parallel"
     rescue LoadError => e
-      warn "[vips-webp] ruby-vips not available: #{e.message}"
+      warn "[vips-webp] Missing dependencies: #{e.message}"
       warn "[vips-webp] Responsive images must be pre-generated locally or in CI"
       return
     else
@@ -28,39 +28,25 @@ module ItalAI
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
       end
-      paths = paths.uniq
+      sources_by_base = {}
+      paths.each do |path|
+        base_path = path.sub(/\.(jpe?g|png)\z/i, "")
+        sources_by_base[base_path] ||= path
+      end
+      paths = sources_by_base.values
 
       @path_locks_mutex = Mutex.new
       @path_locks = {}
       
-      Thread.current[:webp_worker_id] = "main"
       log_info "Found #{paths.size} source images to process"
       
-      worker_count = ENV.fetch("WEBP_WORKERS", [Etc.nprocessors, 2].min).to_i
+      worker_count = ENV.fetch("WEBP_WORKERS", Parallel.processor_count).to_i
       worker_count = 1 if worker_count < 1
 
-      if worker_count == 1
-        paths.each do |path|
-          generate_responsive_images(path)
-        end
-      else
-        buckets = Array.new(worker_count) { [] }
-        paths.each_with_index do |path, index|
-          buckets[index % worker_count] << path
-        end
-
-        workers = buckets.map.with_index do |bucket, index|
-          Thread.new do
-            Thread.current[:webp_worker_id] = "worker-#{index + 1}"
-            bucket.each do |path|
-              generate_responsive_images(path)
-            end
-          end
-        end
-
-        workers.each(&:join)
+      Parallel.each_with_index(paths, in_threads: worker_count) do |path, index|
+        Thread.current[:webp_worker_id] = (index % worker_count) + 1
+        generate_responsive_images(path)
       end
-      
     end
 
     def self.generate_responsive_images(path)
@@ -199,11 +185,14 @@ module ItalAI
       dir = File.dirname(base_path)
       base_name = File.basename(base_path)
 
-      # Only look for files that match THIS specific base name
-      pattern = File.join(dir, "#{base_name}-*w.webp")
+      # Only look for files that match THIS specific base name with exact pattern
+      pattern = File.join(dir, "#{base_name}-[0-9]*w.webp")
       
       Dir.glob(pattern).each do |webp_path|
-        match = /-(\d+)w\.webp\z/i.match(webp_path)
+        # Ensure we only match files that are exactly "basename-123w.webp"
+        # and not "basename-something-123w.webp"
+        basename_pattern = /\A#{Regexp.escape(base_name)}-(\d+)w\.webp\z/i
+        match = basename_pattern.match(File.basename(webp_path))
         next unless match
 
         width = match[1].to_i
@@ -217,13 +206,15 @@ module ItalAI
     end
 
     def self.log_info(message)
-      worker = Thread.current[:webp_worker_id] || "main"
-      puts "[vips-webp][#{worker}] #{message}"
+      worker = Thread.current[:webp_worker_id]
+      prefix = worker ? "[worker-#{worker}]" : ""
+      puts "[vips-webp]#{prefix} #{message}"
     end
 
     def self.log_warn(message)
-      worker = Thread.current[:webp_worker_id] || "main"
-      warn "[vips-webp][#{worker}] #{message}"
+      worker = Thread.current[:webp_worker_id]
+      prefix = worker ? "[worker-#{worker}]" : ""
+      warn "[vips-webp]#{prefix} #{message}"
     end
 
   end
