@@ -24,11 +24,13 @@ module ItalAI
       image_dir = File.join(site.source, "assets", "images")
       return unless Dir.exist?(image_dir)
 
+      @cache_base = site.source
       @cache_manifest_path = File.join(site.source, CACHE_FILENAME)
       @cache_manifest = load_cache_manifest
       
       puts "[vips-webp] Cache manifest path: #{@cache_manifest_path}"
       puts "[vips-webp] Cache entries loaded: #{@cache_manifest.size}"
+      puts "[vips-webp] Cache manifest contents:\n#{JSON.pretty_generate(@cache_manifest)}"
       
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
@@ -52,7 +54,13 @@ module ItalAI
         fingerprint = Digest::SHA256.file(path).hexdigest
         
         # Check cache before loading image (more efficient)
-        cache_entry = @cache_manifest[path]
+        cache_key = cache_key_for(path)
+        cache_entry = @cache_manifest[cache_key]
+        if !cache_entry && @cache_manifest[path]
+          cache_entry = @cache_manifest[path]
+          @cache_manifest.delete(path)
+          @cache_manifest[cache_key] = cache_entry
+        end
         
         if cache_entry
           puts "[vips-webp] DEBUG: Cache entry found for #{File.basename(path)}"
@@ -116,7 +124,7 @@ module ItalAI
         end
 
         # Update cache
-        @cache_manifest[path] = {
+        @cache_manifest[cache_key] = {
           "sha256" => fingerprint,
           "width" => original_width,
           "sizes" => generated_sizes
@@ -124,6 +132,12 @@ module ItalAI
       rescue StandardError => e
         warn "[vips-webp] failed on #{path}: #{e.message}"
       end
+    end
+
+    def self.cache_key_for(path)
+      return path unless @cache_base && path.start_with?(@cache_base)
+
+      path.sub(@cache_base + File::SEPARATOR, "")
     end
 
     def self.outputs_present?(base_path, original_width)
