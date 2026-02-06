@@ -84,16 +84,6 @@ layout: default
 
       <!-- Main Content -->
       <article class="post-main">
-        <!-- Featured Image -->
-        {% if page.hero_image %}
-        <div class="post-featured-image">
-          {% if page.date %}
-          <span class="insight-tag" style="top: auto; bottom: var(--space-sm);">{{ page.date | date: "%d %b %Y" }}</span>
-          {% endif %}
-          <img src="{{ page.image |  default: page.hero_image }}" alt="{{ page.title }}" fetchpriority="high">
-        </div>
-        {% endif %}
-
         <!-- Post Body -->
         <div class="post-body">
           {{ content }}

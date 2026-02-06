@@ -161,9 +161,6 @@
 }
 .content {
     padding: 0 2rem;
-    h2 {
-        margin: 0 0 1rem;
-    }
 }
 .features-grid {
     display: grid;
@@ -179,7 +176,7 @@
 }
 
 .why-section {
-    padding: 2rem 0;
+    padding: 8rem 0 2rem;
     background: var(--standard-dark);
     color: var(--standard-light);
 }
@@ -293,7 +290,7 @@
 }
 
 .insights-section {
-    padding: 2rem 0;
+    padding: 8rem 0 2rem;
 }
 .insights-content {
     padding: 0 2rem;
@@ -302,7 +299,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
-        margin-bottom: 2rem;
+        margin-top: 1rem;
         
         h2 {
             margin: 0;

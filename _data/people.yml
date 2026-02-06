@@ -13,12 +13,6 @@ team:
       x: https://x.com/GalassoFab10
       url: https://fgalasso.bitbucket.io/
     
-  - name: Cristiana Polici
-    role: VP & Operations
-
-  - name: Anastasiia Motyreva
-    role: Head of Marketing & Communications
-    
   - name: Luca Franco
     role: General Manager
     credentials: PhD in Data Science
@@ -27,6 +21,12 @@ team:
     role: Lead Researcher
     credentials: PhD in Data Science
     
+  - name: Anastasiia Motyreva
+    role: Head of Marketing & Communications
+
+  - name: Cristiana Polici
+    role: VP & Operations
+
   - name: Matteo Migliarini
     role: Researcher
     credentials: PhD student in Computer Science
