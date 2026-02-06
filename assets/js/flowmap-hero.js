@@ -52,9 +52,18 @@ function flowmap_deformation() {
             }
         `;
 
-        const renderer = new Renderer({ dpr: 2 });
+        // Use pre-existing canvas instead of creating new one
+        const existingCanvas = box.querySelector('canvas');
+        if (!existingCanvas) {
+            console.error('Canvas not found in flowmap wrapper');
+            return;
+        }
+
+        const renderer = new Renderer({ 
+            dpr: 2,
+            canvas: existingCanvas
+        });
         const gl = renderer.gl;
-        box.appendChild(gl.canvas);
 
         let aspect = 1;
         const mouse = new Vec2(-1);
@@ -217,7 +226,7 @@ if (document.readyState === 'loading') {
 }
 
 function init() {
-    // Wrapper already exists in HTML, just initialize
+    // Wrapper and canvas already exist in HTML, just initialize
     const wrapper = document.querySelector('.flowmap-deformation-wrapper');
     
     if (wrapper) {
