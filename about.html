@@ -27,7 +27,7 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
       </div>
       <div class="who-content">
         <div class="section-label">WHO WE ARE</div>
-        <h2>
+        <h2 class="h2-size">
           A <span class="highlight-green italic weak">research-first</span><br>
           <span class="highlight-blue">AI</span> organization<span class="period">.</span>
         </h2>
@@ -81,7 +81,7 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
       <img src="/assets/images/about-principles.webp" alt="" class="values-decorative" aria-hidden="true">
       <div class="values-header">
         <div class="section-label">VALUES</div>
-        <h2 class="values-title">Our principles<span class="period">.</span></h2>
+        <h2 class="values-title h2-size">Our principles<span class="period">.</span></h2>
         <div class="values-header-row">
           <p class="values-intro">These principles guide how we research, design, and collaborate, independent of technologies or market cycles.</p>
           <div class="values-carousel-nav">
@@ -232,11 +232,11 @@ $(document).ready(function(){
               </div>
               <div class="team-socials-wrapper">
                 <ul class="team-socials wrapper-socials">
-                  {% if person.links.linkedin %}<li><a class="socials" href="{{ person.links.linkedin }}" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a></li>{% endif %}
-                  {% if person.links.x %}<li><a class="socials" href="{{ person.links.x }}" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>{% endif %}
-                  {% if person.links.scholar %}<li><a class="socials" href="{{ person.links.scholar }}" target="_blank"><i class="fa-brands fa-google-scholar"></i></a></li>{% endif %}
-                  {% if person.links.github %}<li><a class="socials" href="{{ person.links.github }}" target="_blank"><i class="fa-brands fa-github"></i></a></li>{% endif %}
-                  {% if person.links.website %}<li><a class="socials" href="{{ person.links.website }}" target="_blank"><i class="fa-solid fa-globe"></i></a></li>{% endif %}
+                  {% if person.links.linkedin %}<li><a class="socials" href="{{ person.links.linkedin }}" target="_blank" aria-label="{{ person.name }}'s LinkedIn Profile"><i class="fa-brands fa-linkedin-in"></i></a></li>{% endif %}
+                  {% if person.links.x %}<li><a class="socials" href="{{ person.links.x }}" target="_blank" aria-label="{{ person.name }}'s X Profile"><i class="fa-brands fa-x-twitter"></i></a></li>{% endif %}
+                  {% if person.links.scholar %}<li><a class="socials" href="{{ person.links.scholar }}" target="_blank" aria-label="{{ person.name }}'s Google Scholar Profile"><i class="fa-brands fa-google-scholar"></i></a></li>{% endif %}
+                  {% if person.links.github %}<li><a class="socials" href="{{ person.links.github }}" target="_blank" aria-label="{{ person.name }}'s GitHub Profile"><i class="fa-brands fa-github"></i></a></li>{% endif %}
+                  {% if person.links.website %}<li><a class="socials" href="{{ person.links.website }}" target="_blank" aria-label="{{ person.name }}'s External Site"><i class="fa-solid fa-globe"></i></a></li>{% endif %}
                 </ul>
               </div>
             </div>

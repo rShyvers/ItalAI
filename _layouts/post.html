@@ -44,21 +44,21 @@ layout: default
       <aside class="post-sidebar">
         <!-- Post Categories -->
         <div class="sidebar-widget">
-          <h3 class="sidebar-title h3-size">TAGS</h3>
+          <h2 class="sidebar-title h5-size">TAGS</h2>
           <div class="category-tags">
             {% if page.categories %}
               {% for category in page.categories %}
-              <a href="/insights/?category={{ category | slugify }}" class="category-tag">{{ category | upcase }}</a>
+              <a href="/insights/?category={{ category | slugify }}" class="filter-btn">{{ category | upcase }}</a>
               {% endfor %}
             {% elsif page.category %}
-              <a href="/insights/?category={{ page.category | slugify }}" class="category-tag">{{ page.category | upcase }}</a>
+              <a href="/insights/?category={{ page.category | slugify }}" class="filter-btn">{{ page.category | upcase }}</a>
             {% endif %}
           </div>
         </div>
 
         <!-- Recent Posts -->
         <div class="sidebar-widget">
-          <h3 class="sidebar-title h3-size">RECENT POSTS</h3>
+          <h2 class="sidebar-title h5-size">RECENT POSTS</h2>
           <div class="recent-posts">
             {% comment %}
             Sort posts by date (descending), then by series and part number.
@@ -68,11 +68,11 @@ layout: default
             {% assign recent_posts = sorted_posts | limit: 3 %}
             {% for post in recent_posts %}
             <a href="{{ post.url }}" class="recent-post-item">
-              {% if post.hero_image %}
-              <img src="{{ post.hero_image }}" alt="{{ post.title }}" class="recent-post-thumb">
-              {% endif %} 
+              <div style="position: relative">
+                <span class="recent-post-date">{{ post.date | date: "%d-%b-%Y" }}</span>
+                <img src="{{ post.hero_image }}" alt="{{ post.title }}" class="recent-post-thumb">
+              </div>
               <div class="recent-post-info">
-                <p class="recent-post-date">{{ post.date | date: "%d-%B-%Y" }}</p>
                 <p class="recent-post-title">{{ post.title | strip_html }}</p>
                 <p class="recent-post-excerpt">{{ post.excerpt | strip_html }}</p>
               </div>
@@ -88,7 +88,7 @@ layout: default
         {% if page.hero_image %}
         <div class="post-featured-image">
           {% if page.date %}
-          <span class="insight-tag" style="top: auto; bottom: var(--space-sm);">{{ page.date | date: "%d %B %Y" }}</span>
+          <span class="insight-tag" style="top: auto; bottom: var(--space-sm);">{{ page.date | date: "%d %b %Y" }}</span>
           {% endif %}
           <img src="{{ page.image |  default: page.hero_image }}" alt="{{ page.title }}" fetchpriority="high">
         </div>

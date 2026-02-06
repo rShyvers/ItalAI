@@ -1,6 +1,7 @@
 {% assign delay = 0 %}
 {% assign heading_tag = include.tag | default: "h1" %}
-{% assign header_size = include.class | default: "" %}
+{% assign default_class = heading_tag | append: "-size" %}
+{% assign header_size = include.class | default: default_class %}
 {% assign words = include.title | split: '|' %}
 
 <{{ heading_tag }} class="{{ header_size }}">
