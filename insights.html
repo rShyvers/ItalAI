@@ -70,7 +70,7 @@ SHARING IDEAS THAT SHAPE<br>
 <section class="insights-hub">
   <div class="container">
     {% assign per_page = site.insights_manifest.per_page | default: 12 %}
-    {% assign insights_posts = site.posts | where_exp: "post", "post.published_in_blog != false" %}
+    {% assign insights_posts = site.posts | sort: "part" | sort: "date" | reverse %}
     {% assign total_items = insights_posts | size %}
     {% assign initial_posts = insights_posts | slice: 0, per_page %}
     {% if total_items > per_page %}
