@@ -9,14 +9,12 @@ module ItalAI
     SIZES = [400, 800, 1200, 1600].freeze
     QUALITY = 78  # Reduced for better compression
     EFFORT = 6    # Increased for better compression
-    MANIFEST_VERSION = 1
+    CACHE_FILENAME = ".webp-cache.json".freeze
 
     def self.run(site)
       require "vips"
-      require "digest"
-      require "fileutils"
       require "json"
-      require "pathname"
+      require "digest"
     rescue LoadError => e
       warn "[vips-webp] ruby-vips not available: #{e.message}"
       warn "[vips-webp] Responsive images must be pre-generated locally or in CI"
@@ -34,55 +32,45 @@ module ItalAI
       image_dir = File.join(site.source, "assets", "images")
       return unless Dir.exist?(image_dir)
 
-      manifest = normalize_manifest(load_manifest(site))
-      @manifest_mutex = Mutex.new
+      @cache_manifest_path = File.join(site.source, CACHE_FILENAME)
+      @cache_manifest = load_cache_manifest
       
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
       end
       
-      process_images(paths, site, manifest)
-      save_manifest(site, manifest)
+      process_images(paths)
+      save_cache_manifest
     end
 
-    def self.process_images(paths, site, manifest)
+    def self.process_images(paths)
       if @parallel_available && paths.length > 3
         # Use parallel processing for better performance
-        Parallel.each(paths, in_threads: [Parallel.processor_count, 4].min) do |path|
-          generate_responsive_images(path, site, manifest)
+        Parallel.each(paths, in_processes: [Parallel.processor_count, 4].min) do |path|
+          generate_responsive_images(path)
         end
       else
         # Fall back to sequential processing
         paths.each do |path|
-          generate_responsive_images(path, site, manifest)
+          generate_responsive_images(path)
         end
       end
     end
 
-    def self.generate_responsive_images(path, site, manifest)
+    def self.generate_responsive_images(path)
       base_path = path.sub(/\.(jpe?g|png)\z/i, "")
-      relative_path = Pathname.new(path).relative_path_from(Pathname.new(site.source)).to_s
-      digest = Digest::SHA256.file(path).hexdigest
       
       begin
-        cached = manifest["files"][relative_path]
-        original_width = cached && cached["width"]
-
-        if cached && cached["digest"] == digest
-          original_width ||= begin
-            image = Vips::Image.new_from_file(path, access: :random)
-            image = image.autorot if image.respond_to?(:autorot)
-            image.width
-          end
-
-          if outputs_present?(base_path, original_width)
-            return
-          end
-        end
-
         image = Vips::Image.new_from_file(path, access: :random)
         image = image.autorot if image.respond_to?(:autorot)
+        
         original_width = image.width
+
+        fingerprint = Digest::SHA256.file(path).hexdigest
+        cache_entry = @cache_manifest[path]
+        if cache_entry && cache_entry["sha256"] == fingerprint && outputs_present?(base_path, original_width)
+          return
+        end
 
         # First, generate the base .webp file (for src attribute)
         base_webp_path = "#{base_path}.webp"
@@ -122,7 +110,13 @@ module ItalAI
           end
         end
 
-        update_manifest(manifest, relative_path, digest, original_width)
+        cleanup_stale_responsive_images(base_path, original_width)
+
+        @cache_manifest[path] = {
+          "sha256" => fingerprint,
+          "width" => original_width,
+          "sizes" => SIZES.select { |w| w <= original_width }
+        }
       rescue StandardError => e
         warn "[vips-webp] failed on #{path}: #{e.message}"
       end
@@ -134,7 +128,6 @@ module ItalAI
 
       SIZES.each do |width|
         next if width > original_width
-
         webp_path = "#{base_path}-#{width}w.webp"
         return false unless File.exist?(webp_path) && File.size(webp_path) > 0
       end
@@ -142,61 +135,37 @@ module ItalAI
       true
     end
 
-    def self.update_manifest(manifest, relative_path, digest, original_width)
-      @manifest_mutex.synchronize do
-        manifest["files"][relative_path] = {
-          "digest" => digest,
-          "width" => original_width
-        }
+    def self.cleanup_stale_responsive_images(base_path, original_width)
+      expected_sizes = SIZES.select { |w| w <= original_width }
+
+      Dir.glob("#{base_path}-*w.webp").each do |path|
+        match = /-(\d+)w\.webp\z/i.match(path)
+        next unless match
+
+        width = match[1].to_i
+        next if expected_sizes.include?(width)
+
+        File.delete(path)
+        puts "[vips-webp] removed stale #{File.basename(path)}"
       end
+    rescue StandardError => e
+      warn "[vips-webp] failed to clean stale images for #{File.basename(base_path)}: #{e.message}"
     end
 
-    def self.normalize_manifest(manifest)
-      options = {
-        "sizes" => SIZES,
-        "quality" => QUALITY,
-        "effort" => EFFORT
-      }
+    def self.load_cache_manifest
+      return {} unless @cache_manifest_path && File.exist?(@cache_manifest_path)
 
-      return default_manifest if manifest["version"] != MANIFEST_VERSION
-      return default_manifest if manifest["options"] != options
-
-      manifest["files"] ||= {}
-      manifest
+      JSON.parse(File.read(@cache_manifest_path))
+    rescue StandardError
+      {}
     end
 
-    def self.default_manifest
-      {
-        "version" => MANIFEST_VERSION,
-        "options" => {
-          "sizes" => SIZES,
-          "quality" => QUALITY,
-          "effort" => EFFORT
-        },
-        "files" => {}
-      }
-    end
+    def self.save_cache_manifest
+      return unless @cache_manifest_path
 
-    def self.cache_path(site)
-      cache_dir = site.respond_to?(:cache_dir) ? site.cache_dir : File.join(site.source, ".jekyll-cache")
-      FileUtils.mkdir_p(cache_dir)
-      File.join(cache_dir, "vips-webp-manifest.json")
-    end
-
-    def self.load_manifest(site)
-      path = cache_path(site)
-      return default_manifest unless File.exist?(path)
-
-      JSON.parse(File.read(path))
-    rescue JSON::ParserError
-      default_manifest
-    end
-
-    def self.save_manifest(site, manifest)
-      path = cache_path(site)
-      temp = "#{path}.tmp"
-      File.write(temp, JSON.pretty_generate(manifest))
-      FileUtils.mv(temp, path)
+      File.write(@cache_manifest_path, JSON.pretty_generate(@cache_manifest))
+    rescue StandardError => e
+      warn "[vips-webp] failed to write cache manifest: #{e.message}"
     end
   end
 end
