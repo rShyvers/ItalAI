@@ -8,9 +8,9 @@ import {
     Vec4,
     Texture,
     Flowmap
-} from 'https://unpkg.com/ogl';
+} from 'https://esm.sh/ogl@1.0.11/es2022/ogl.mjs';
 
-// Flowmap deformation effect - mimics Elementor Aigency theme exactly
+// Flowmap deformation effect
 function flowmap_deformation() {
     document.querySelectorAll('.flowmap-deformation-wrapper').forEach(function(box) {
         const imgSize = [
@@ -52,66 +52,24 @@ function flowmap_deformation() {
             }
         `;
 
-        {
-            const renderer = new Renderer({ dpr: 2 });
-            const gl = renderer.gl;
-            box.appendChild(gl.canvas);
+        // Use pre-existing canvas instead of creating new one
+        const existingCanvas = box.querySelector('canvas');
+        if (!existingCanvas) {
+            console.error('Canvas not found in flowmap wrapper');
+            return;
+        }
 
-            let aspect = 1;
-            const mouse = new Vec2(-1);
-            const velocity = new Vec2();
+        const renderer = new Renderer({ 
+            dpr: 2,
+            canvas: existingCanvas
+        });
+        const gl = renderer.gl;
 
-            function resize() {
-                let a1, a2;
-                var imageAspect = imgSize[1] / imgSize[0];
-                if (box.offsetHeight / box.offsetWidth < imageAspect) {
-                    a1 = 1;
-                    a2 = box.offsetHeight / box.offsetWidth / imageAspect;
-                } else {
-                    a1 = (box.offsetWidth / box.offsetHeight) * imageAspect;
-                    a2 = 1;
-                }
-                mesh.program.uniforms.res.value = new Vec4(box.offsetWidth, box.offsetHeight, a1, a2);
-                renderer.setSize(box.offsetWidth, box.offsetHeight);
-                aspect = box.offsetWidth / box.offsetHeight;
-            }
+        let aspect = 1;
+        const mouse = new Vec2(-1);
+        const velocity = new Vec2();
 
-            const flowmap = new Flowmap(gl, { 
-                falloff: 0.6,
-                dissipation: 0.96  // explicitly set to match - try lower values for faster snapback
-            });
-
-            const geometry = new Geometry(gl, {
-                position: {
-                    size: 2,
-                    data: new Float32Array([-1, -1, 3, -1, -1, 3])
-                },
-                uv: {
-                    size: 2,
-                    data: new Float32Array([0, 0, 2, 0, 0, 2])
-                }
-            });
-
-            const texture = new Texture(gl, {
-                minFilter: gl.LINEAR,
-                magFilter: gl.LINEAR
-            });
-
-            const img = new Image();
-            img.onload = () => {
-                texture.image = img;
-                // Force initial render to load texture into GPU
-                renderer.render({ scene: mesh });
-                // Double RAF ensures GPU has processed the texture
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        box.classList.add('active');
-                    });
-                });
-            };
-            img.crossOrigin = "Anonymous";
-            img.src = box.getAttribute('data-bg');
-
+        function resize() {
             let a1, a2;
             var imageAspect = imgSize[1] / imgSize[0];
             if (box.offsetHeight / box.offsetWidth < imageAspect) {
@@ -121,94 +79,143 @@ function flowmap_deformation() {
                 a1 = (box.offsetWidth / box.offsetHeight) * imageAspect;
                 a2 = 1;
             }
+            mesh.program.uniforms.res.value = new Vec4(box.offsetWidth, box.offsetHeight, a1, a2);
+            renderer.setSize(box.offsetWidth, box.offsetHeight);
+            aspect = box.offsetWidth / box.offsetHeight;
+        }
 
-            const program = new Program(gl, {
-                vertex,
-                fragment,
-                uniforms: {
-                    uTime: { value: 0 },
-                    tWater: { value: texture },
-                    res: {
-                        value: new Vec4(box.offsetWidth, box.offsetHeight, a1, a2)
-                    },
-                    img: {
-                        value: new Vec2(imgSize[0], imgSize[1])
-                    },
-                    tFlow: flowmap.uniform
-                }
+        const flowmap = new Flowmap(gl, { 
+            falloff: 0.6,
+            dissipation: 0.96
+        });
+
+        const geometry = new Geometry(gl, {
+            position: {
+                size: 2,
+                data: new Float32Array([-1, -1, 3, -1, -1, 3])
+            },
+            uv: {
+                size: 2,
+                data: new Float32Array([0, 0, 2, 0, 0, 2])
+            }
+        });
+
+        const texture = new Texture(gl, {
+            minFilter: gl.LINEAR,
+            magFilter: gl.LINEAR
+        });
+
+        const img = new Image();
+        img.onload = () => {
+            texture.image = img;
+            // Force initial render to load texture into GPU
+            renderer.render({ scene: mesh });
+            // Double RAF ensures GPU has processed the texture
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    box.classList.add('active');
+                });
             });
+        };
+        img.crossOrigin = "Anonymous";
+        img.src = box.getAttribute('data-bg');
 
-            const mesh = new Mesh(gl, { geometry, program });
+        let a1, a2;
+        var imageAspect = imgSize[1] / imgSize[0];
+        if (box.offsetHeight / box.offsetWidth < imageAspect) {
+            a1 = 1;
+            a2 = box.offsetHeight / box.offsetWidth / imageAspect;
+        } else {
+            a1 = (box.offsetWidth / box.offsetHeight) * imageAspect;
+            a2 = 1;
+        }
 
-            window.addEventListener("resize", resize, false);
-            resize();
-
-            const isTouchCapable = "ontouchstart" in window;
-            const section = box.closest('section') || box.closest('.e-con');
-
-            if (isTouchCapable) {
-                section.addEventListener("touchstart", updateMouse, false);
-                section.addEventListener("touchmove", updateMouse, { passive: false });
-            } else {
-                section.addEventListener("mousemove", updateMouse, false);
+        const program = new Program(gl, {
+            vertex,
+            fragment,
+            uniforms: {
+                uTime: { value: 0 },
+                tWater: { value: texture },
+                res: {
+                    value: new Vec4(box.offsetWidth, box.offsetHeight, a1, a2)
+                },
+                img: {
+                    value: new Vec2(imgSize[0], imgSize[1])
+                },
+                tFlow: flowmap.uniform
             }
+        });
 
-            let lastTime;
-            const lastMouse = new Vec2();
+        const mesh = new Mesh(gl, { geometry, program });
 
-            function updateMouse(e) {
-                if (e.changedTouches && e.changedTouches.length) {
-                    e.x = e.changedTouches[0].pageX;
-                    e.y = e.changedTouches[0].pageY;
-                }
-                if (e.x === undefined) {
-                    e.x = e.pageX;
-                    e.y = e.pageY;
-                }
-                mouse.set(e.x / gl.renderer.width, 1.0 - e.y / gl.renderer.height);
+        window.addEventListener("resize", resize, false);
+        resize();
 
-                if (!lastTime) {
-                    lastTime = performance.now();
-                    lastMouse.set(e.x, e.y);
-                }
+        const isTouchCapable = "ontouchstart" in window;
+        const section = box.closest('section') || box.closest('.e-con');
 
-                const deltaX = e.x - lastMouse.x;
-                const deltaY = e.y - lastMouse.y;
+        if (isTouchCapable) {
+            section.addEventListener("touchstart", updateMouse, false);
+            section.addEventListener("touchmove", updateMouse, { passive: false });
+        } else {
+            section.addEventListener("mousemove", updateMouse, false);
+        }
+
+        let lastTime;
+        const lastMouse = new Vec2();
+
+        function updateMouse(e) {
+            if (e.changedTouches && e.changedTouches.length) {
+                e.x = e.changedTouches[0].pageX;
+                e.y = e.changedTouches[0].pageY;
+            }
+            if (e.x === undefined) {
+                e.x = e.pageX;
+                e.y = e.pageY;
+            }
+            mouse.set(e.x / gl.renderer.width, 1.0 - e.y / gl.renderer.height);
+
+            if (!lastTime) {
+                lastTime = performance.now();
                 lastMouse.set(e.x, e.y);
-
-                let time = performance.now();
-                let delta = Math.max(10.4, time - lastTime);
-                lastTime = time;
-
-                velocity.x = deltaX / delta;
-                velocity.y = deltaY / delta;
-                velocity.needsUpdate = true;
             }
 
+            const deltaX = e.x - lastMouse.x;
+            const deltaY = e.y - lastMouse.y;
+            lastMouse.set(e.x, e.y);
+
+            let time = performance.now();
+            let delta = Math.max(10.4, time - lastTime);
+            lastTime = time;
+
+            velocity.x = deltaX / delta;
+            velocity.y = deltaY / delta;
+            velocity.needsUpdate = true;
+        }
+
+        requestAnimationFrame(update);
+
+        function update(t) {
             requestAnimationFrame(update);
 
-            function update(t) {
-                requestAnimationFrame(update);
-
-                if (!velocity.needsUpdate) {
-                    mouse.set(-1);
-                    velocity.set(0);
-                }
-                velocity.needsUpdate = false;
-
-                flowmap.aspect = aspect;
-                flowmap.mouse.copy(mouse);
-                flowmap.velocity.lerp(velocity, velocity.len ? 0.15 : 0.1);
-                flowmap.update();
-
-                program.uniforms.uTime.value = t * 0.01;
-                renderer.render({ scene: mesh });
+            if (!velocity.needsUpdate) {
+                mouse.set(-1);
+                velocity.set(0);
             }
+            velocity.needsUpdate = false;
+
+            flowmap.aspect = aspect;
+            flowmap.mouse.copy(mouse);
+            flowmap.velocity.lerp(velocity, velocity.len ? 0.15 : 0.1);
+            flowmap.update();
+
+            program.uniforms.uTime.value = t * 0.01;
+            renderer.render({ scene: mesh });
         }
     });
 }
 
-// Initialize flowmap for hero sections on page load
+// Initialize flowmap on page load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
@@ -216,21 +223,10 @@ if (document.readyState === 'loading') {
 }
 
 function init() {
-    // Check if section has flowmap enabled
-    const heroSection = document.querySelector('.main-hero[data-flowmap="on"]');
+    // Wrapper and canvas already exist in HTML, just initialize
+    const wrapper = document.querySelector('.flowmap-deformation-wrapper');
     
-    if (heroSection && heroSection.dataset.flowmapUrl !== '') {
-        // Create wrapper div
-        const wrapper = document.createElement('div');
-        wrapper.className = 'flowmap-deformation-wrapper';
-        wrapper.setAttribute('data-bg', heroSection.dataset.flowmapUrl);
-        wrapper.setAttribute('data-bg-width', heroSection.dataset.flowmapWidth);
-        wrapper.setAttribute('data-bg-height', heroSection.dataset.flowmapHeight);
-        
-        // Insert at beginning of section
-        heroSection.insertBefore(wrapper, heroSection.firstChild);
-        
-        // Initialize flowmap immediately (no hover needed)
+    if (wrapper) {
         flowmap_deformation();
     }
 }

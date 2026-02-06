@@ -41,6 +41,11 @@ description: "A short summary for SEO."
 ---
 ```
 
+SEO Regex Check: used to search for a tags that go no where.
+```regex
+<a\s+(?![^>]*href)[^>]*>
+```
+
 The default meta description is set in `_config.yaml`.
 No per-page descriptions have been written; all pages currently use the default unless you add a `description` field to the post's front matter or the HTML page.
 
@@ -86,3 +91,17 @@ This project uses several custom Jekyll plugins:
 - **Deployment:** Some plugins (notably `vips_webp_generator.rb`) may not work on GitHub Actions due to system library constraints. This does not affect the published site, as only WebP assets are shipped.
 
 For more, see the [Jekyll documentation](https://jekyllrb.com/docs/).
+
+
+
+Dark Mode (?)
+
+--dark-green: #32b692;          /* Keep the same - works well on dark */
+--dark-green-alt: #1a4d3d;      /* Darker, muted alternative */
+--dark-light: #2C2C2C;          /* Your dark-alt becomes the base */
+--dark-light-alt: #3d3d3d;      /* Slightly lighter for contrast */
+--dark-dark: #F6F4EC;           /* Your light becomes text color */
+--dark-dark-alt: #D9CBB5;       /* Softer text for less emphasis */
+--dark-red: #ff6b61;            /* Slightly brighter, easier to see */
+--dark-blue: #8b9dff;           /* Lightened for better contrast */
+--dark-disabled: #404040;       /* Darker disabled state */

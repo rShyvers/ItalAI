@@ -111,61 +111,32 @@
 
 /* Insights Page - Section and Design of Page */
 
-//Filter Section
-.insights-filter {
-}
-
-.filter-controls {
-  text-align: center;
-  background: var(--standard-light-alt);
-  padding: 2rem 2rem;
-  border-radius: 48px;
-  margin: 1rem;
-}
-
-.filter-title {
-  color: var(--standard-dark);
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  margin-bottom: var(--space-md, 1.5rem);
-}
-
-.filter-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm, 0.75rem);
-  justify-content: center;
-}
-
-.filter-btn {
-  background: transparent;
-  border: 2px solid var(--standard-dark);
-  color: var(--standard-dark);
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.filter-btn:hover {
-  background: var(--standard-light);
-  color: var(--standard-dark);
-}
-
-.filter-btn.active {
-  background: var(--standard-light);
-  color: var(--standard-dark);
-}
-
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   padding: 2rem 2rem;
+  &.cards-exit .insight-card {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  &.cards-enter .insight-card {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  &.cards-active .insight-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.insights-grid .insight-card {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.34s ease,
+    transform 0.34s ease;
+  will-change: opacity, transform;
 }
 
 // Buttons and Summary
@@ -181,4 +152,158 @@
 #itemsShown {
   font-weight: 600;
   color: var(--standard-blue);
+}
+
+
+
+
+
+/* ===== Filter Section (v2 redesign) ===== */
+
+//Filter Section
+.insights-filter {
+}
+
+.filter-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0 1rem;
+  /* Removed: background, border-radius, border, box-shadow, overflow, text-align */
+}
+
+.filter-dash {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
+.filter-title {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--standard-dark);
+  opacity: 0.55;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* The horizontal line between title and clear button */
+.filter-title::after {
+  content: "";
+  display: none;
+}
+
+.filter-dash::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(106, 124, 255, 0.2);
+  order: 1;
+}
+
+.filter-title {
+  order: 0;
+}
+
+.filter-clear {
+  order: 2;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--standard-blue);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  text-underline-offset: 2px;
+  text-decoration-color: rgba(106, 124, 255, 0.4);
+  padding: 0;
+  transition: text-decoration-color 0.2s ease;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  i {
+    font-size: 0.7rem;
+  }
+
+  &:hover {
+    text-decoration-color: var(--standard-blue);
+    transform: none;
+  }
+}
+
+.filter-status {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--standard-dark);
+  opacity: 0.55;
+  margin: 0;
+  text-align: left;
+}
+
+.filter-status span {
+  font-weight: 600;
+  color: var(--standard-dark);
+  opacity: 1;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+.filter-btn {
+  text-decoration: none;
+  background: var(--standard-light-alt, #e8e3dc);
+  border: 1px solid rgba(106, 124, 255, 0.15);
+  color: var(--standard-dark);
+  opacity: 0.6;
+  padding: 0.5rem 1.25rem;
+  border-radius: 2px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--button-font-family);
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.filter-btn:hover {
+  border-color: rgba(35, 38, 43, 0.25);
+  opacity: 1;
+  transform: none;
+  box-shadow: none;
+}
+
+.filter-btn.active {
+  background: var(--standard-dark, #23262b);
+  color: var(--standard-light, #f0ece6);
+  border-color: var(--standard-dark, #23262b);
+  opacity: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn:focus-visible {
+  outline: 2px solid var(--standard-blue);
+  outline-offset: 2px;
+}
+
+.filter-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--standard-dark);
+  margin: 0;
+  letter-spacing: 0.02em;
 }

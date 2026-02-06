@@ -1,6 +1,7 @@
 ---
 layout: default
 title: About Us
+description: "ItalAI is a research-driven AI organization bridging academia and industry. Founded in 2024, we collaborate with leading universities and technology partners to advance artificial intelligence through fundamental research, applied AI, and system-level design with emphasis on reliability and scalability."
 ---
 
 {%- capture hero_heading -%}
@@ -25,8 +26,8 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
         <img src="/assets/images/about.webp" alt="Who We Are" loading="lazy">
       </div>
       <div class="who-content">
-        <h7 class="section-label">WHO WE ARE</h7>
-        <h2>
+        <div class="section-label">WHO WE ARE</div>
+        <h2 class="h2-size">
           A <span class="highlight-green italic weak">research-first</span><br>
           <span class="highlight-blue">AI</span> organization<span class="period">.</span>
         </h2>
@@ -34,7 +35,7 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
           Founded in 2024, ItalAI operates at the intersection of academic research and industrial application.
         </p>
         <p class="description">
-          <a class="strong">We collaborate with leading universities, research centers,</a> and <a class="strong">technology partners</a> to advance artificial intelligence, and translate that knowledge into deployable systems. Our work spans fundamental research, applied AI, and system-level design, with a <span class="emphasis">strong emphasis on correctness, reliability, and scalability.</span>
+          <span class="strong">We collaborate with leading universities, research centers,</span> and <span class="strong">technology partners</span> to advance artificial intelligence, and translate that knowledge into deployable systems. Our work spans fundamental research, applied AI, and system-level design, with a <span class="emphasis">strong emphasis on correctness, reliability, and scalability.</span>
         </p>
         <p class="description">
           We do not position ourselves as a traditional AI consultancy. Our role is to <span class="emphasis">invent, engineer, and validate AI systems</span> designed to function beyond experimental settings.
@@ -66,7 +67,7 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
         Research, correctness, and long-term reliability guide every decision we make.
       </div>
     </div>
-    <a class="cta-label cta-overlap">Want to know more?</a>
+    <span class="cta-label cta-overlap">Want to know more?</span>
     <a class="cta-button-alt cta-overlap" href="#contact">
       GET IN TOUCH
     </a>
@@ -75,11 +76,12 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
 
 <!-- Values Section - Dark Background -->
 <section class="principle-dark">
+  <img src="/assets/images/about-principles.webp" alt="" class="values-decorative" aria-hidden="true">
   <div class="container">
     <div class="values-content">
       <div class="values-header">
-        <h7 class="section-label">VALUES</h7>
-        <h2 class="values-title">Our principles<span class="period">.</span></h2>
+        <div class="section-label">VALUES</div>
+        <h2 class="values-title h2-size">Our principles<span class="period">.</span></h2>
         <div class="values-header-row">
           <p class="values-intro">These principles guide how we research, design, and collaborate, independent of technologies or market cycles.</p>
           <div class="values-carousel-nav">
@@ -95,8 +97,8 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
           {% for principle in site.data.principles.principles %}
             <div class="value-card">
               <div class="value-content">
-                <h2 class="value-number">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</h1>
-                <h5 class="value-card-title">{{ principle.title }}<span class="period">.</span></h3>
+                <div class="value-number h2-size">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</div>
+                <h3 class="value-card-title h5-size">{{ principle.title }}<span class="period">.</span></h3>
                 <p class="value-card-text">{{ principle.text }}</p>
               </div>
             </div>
@@ -113,20 +115,22 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
 <section class="partners-section">
   <div class="container">
     <div class="partners-content">
-      <h7 class="section-label">PARTNERSHIPS</h7>
-      <h3 class="partners-title uppercase">
+      <div class="section-label">PARTNERSHIPS</div>
+      <h2 class="partners-title uppercase h3-size">
         Advancing AI through<br>
         <span class="highlight-blue uppercase weak italic">global collaboration</span><span class="period">.</span>
-      </h3>
+      </h2>
       <div class="partner-container">
           <!-- Static Grid for Desktop -->
           <div class="partners-grid">
               {% assign partner_files = site.static_files | where: "extname", ".webp" %}
               {% for file in partner_files %}
                   {% if file.path contains "/assets/images/partners/" %}
+                  {% unless file.path contains "w.webp" %}
               <div class="partner-card">
                   <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
               </div>
+                  {% endunless %}
                   {% endif %}
               {% endfor %}
           </div>
@@ -136,9 +140,11 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
               {% assign partner_files = site.static_files | where: "extname", ".webp" %}
               {% for file in partner_files %}
                   {% if file.path contains "/assets/images/partners/" %}
+                  {% unless file.path contains "w.webp" %}
               <div class="partner-card">
                   <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
               </div>
+                  {% endunless %}
                   {% endif %}
               {% endfor %}
           </div>
@@ -196,12 +202,12 @@ $(document).ready(function(){
         {% if forloop.index0 == 0 %}
           <div class="work-with-us-card">
             <div class="work-with-us-content">
-              <h7 class="section-label">TEAM</h7>
-              <h3>
+              <div class="section-label">TEAM</div>
+              <h2 class="h3-size">
                 Blending AI research<br>
                 and Industry<br>
                 Expertise<span class="period">.</span>
-              </h3>
+              </h2>
               <a class="cta-button" href="#contact">
                 WORK WITH US
               </a>
@@ -212,7 +218,7 @@ $(document).ready(function(){
 
         {% if forloop.index0 == 4 %}
           <div class="research-driven-card">
-            <h3 class="research-label highlight-green">Research<br>driven</h2>
+            <h3 class="research-label highlight-green h3-size">Research<br>driven</h3>
             <p class="large research-subtext strong">Team</p>
           </div>
           {% assign grid_points = grid_points | plus: 1 %}
@@ -226,11 +232,11 @@ $(document).ready(function(){
               </div>
               <div class="team-socials-wrapper">
                 <ul class="team-socials wrapper-socials">
-                  {% if person.links.linkedin %}<li><a class="socials" href="{{ person.links.linkedin }}" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a></li>{% endif %}
-                  {% if person.links.x %}<li><a class="socials" href="{{ person.links.x }}" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>{% endif %}
-                  {% if person.links.scholar %}<li><a class="socials" href="{{ person.links.scholar }}" target="_blank"><i class="fa-brands fa-google-scholar"></i></a></li>{% endif %}
-                  {% if person.links.github %}<li><a class="socials" href="{{ person.links.github }}" target="_blank"><i class="fa-brands fa-github"></i></a></li>{% endif %}
-                  {% if person.links.website %}<li><a class="socials" href="{{ person.links.website }}" target="_blank"><i class="fa-solid fa-globe"></i></a></li>{% endif %}
+                  {% if person.links.linkedin %}<li><a class="socials" href="{{ person.links.linkedin }}" target="_blank" aria-label="{{ person.name }}'s LinkedIn Profile"><i class="fa-brands fa-linkedin-in"></i></a></li>{% endif %}
+                  {% if person.links.x %}<li><a class="socials" href="{{ person.links.x }}" target="_blank" aria-label="{{ person.name }}'s X Profile"><i class="fa-brands fa-x-twitter"></i></a></li>{% endif %}
+                  {% if person.links.scholar %}<li><a class="socials" href="{{ person.links.scholar }}" target="_blank" aria-label="{{ person.name }}'s Google Scholar Profile"><i class="fa-brands fa-google-scholar"></i></a></li>{% endif %}
+                  {% if person.links.github %}<li><a class="socials" href="{{ person.links.github }}" target="_blank" aria-label="{{ person.name }}'s GitHub Profile"><i class="fa-brands fa-github"></i></a></li>{% endif %}
+                  {% if person.links.website %}<li><a class="socials" href="{{ person.links.website }}" target="_blank" aria-label="{{ person.name }}'s External Site"><i class="fa-solid fa-globe"></i></a></li>{% endif %}
                 </ul>
               </div>
             </div>
@@ -247,7 +253,7 @@ $(document).ready(function(){
             >
           </div>
           <div class="person-info">
-            <h4 class="person-name">{{ person.name }}</h4>
+            <h3 class="person-name h5-size">{{ person.name }}</h3>
             <p class="person-role">{{ person.role }}{% if person.credentials %}, {{ person.credentials }}{% endif %}</p>
           </div>
         </div>

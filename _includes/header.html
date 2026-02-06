@@ -1,6 +1,6 @@
 <nav class="navbar">
   <a class="logo" href="/">
-    <img class="logo" src="/assets/logo.svg" alt="ItalAI">
+    <img class="logo" src="/assets/logo.svg" alt="ItalAI" style="max-height: 48px;">
   </a>
 
   <ul class="nav-links">
@@ -13,12 +13,14 @@
   <!-- CTA for desktop -->
   <a href="#contact" class="cta-button-alt desktop-cta" style="margin-left: auto;">Get in Touch</a>
 
-  <button class="hamburger" aria-label="Toggle menu">
+  <!-- CSS-only hamburger menu -->
+  <input type="checkbox" id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
+  <label for="menu-toggle" class="hamburger" aria-label="Toggle menu">
     <span></span>
     <span></span>
     <span></span>
-  </button>
-  <div class="overlay"></div>
+  </label>
+  <label for="menu-toggle" class="overlay"></label>
   <div class="mobile-nav">
     <ul>
       <li><a href="/" {% if page.url == "/" %}class="active"{% endif %}>Home</a></li>
@@ -31,22 +33,9 @@
   </div>
 </nav>
 <script>
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.mobile-nav');
-const overlay = document.querySelector('.overlay');
-
-function toggleMenu() {
-  hamburger.classList.toggle('active');
-  navLinks.classList.toggle('active');
-  overlay.classList.toggle('active');
-  document.body.classList.toggle('no-scroll'); // Prevent body scroll
-}
-
-hamburger.addEventListener('click', toggleMenu);
-overlay.addEventListener('click', toggleMenu);
-
-// Close menu when clicking a link
 document.querySelectorAll('.mobile-nav a').forEach(link => {
-  link.addEventListener('click', toggleMenu);
+  link.addEventListener('click', () => {
+    document.getElementById('menu-toggle').checked = false;
+  });
 });
 </script>

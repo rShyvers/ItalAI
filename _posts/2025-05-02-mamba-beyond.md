@@ -1,6 +1,8 @@
 ---
 layout: post
 title: "🦛 Beyond Vanilla SSMs"
+description: "ItalAI explores advanced state space models beyond vanilla SSMs: HiPPO initialization, S4 architecture, and Mamba's selective scan algorithm. Deep dive into next-generation neural architectures for efficient long-sequence modeling and their applications in vision, audio, and language processing."
+image: "/assets/images/blog/cards/ssm.webp"
 category: "Transformers"
 hero_image: "/assets/images/blog/cards/ssm.webp"
 excerpt: "Is there an alternative to transformer networks?"
@@ -8,18 +10,17 @@ series: mamba
 part: 3
 published_in_blog: true
 author: "Guido Maria D'Amely di Melendugno"
+last_modified_at: 2026-02-03
 ---
-
-### 🦛 Beyond Vanilla SSMs
 
 * TOC
 {:toc}
 
-#### Intro
+## Intro
 
 In the previous sections, we explored the fundamentals and applications of traditional state space models (SSMs), revealing their versatility in handling complex temporal dynamics. However, a persistent challenge with these "vanilla" models is their susceptibility to the vanishing and exploding gradients problem—particularly when applied to long data sequences. This complicates training and limits the potential depth and accuracy of these models. Indeed, a new class of models, known as **S4** (Structured State-space Models for Sequences), has emerged to address these shortcomings. S4 models incorporate advanced architectural innovations that stabilize the training process and enhance model performance across extensive sequences. This chapter delves into the mechanics of S4 models, illustrating how they effectively counter the gradient issues that plague their traditional counterparts and why they represent a significant advancement in the field of sequential data analysis.
 
-#### The memory problem and the S4 model
+## The memory problem and the S4 model
 
 Bearing in mind the fundamental equations of discrete SSMs:
 
@@ -30,7 +31,7 @@ we can see that the vector $$h_n$$ carries the information extracted from the in
 
 This very intuitive formulation again recalls the RNNs formalization, and, unfortunately, the parallel between the two also involves the issues we know from recurrent models, such as exploding or vanishing gradients. Indeed, the elegant formulation of the SSM layer we delved into in the previous chapter actually reported poor results in practice. However, the [Albert Gu](https://scholar.google.com/citations?user=DVCHv1kAAAAJ&hl=en), [Tri Dao](https://tridao.me/), and [Christopher Ré](https://cs.stanford.edu/~chrismre/) team at Stanford University studied this problem in recent years and came up with a novel solution that allows the state to better remember the past.
 
-##### Happy Happy Hippo!
+### Happy Happy Hippo!
 
 As evident from the preceding discussion, the matrix $$A$$ plays a crucial role in determining the memory retention capabilities of the state. A key innovation introduced by the researchers Albert Gu and Christopher Ré in their exploration of the S4 model is the **High Order Polynomial Projection Operator** (**HiPPO**) theory, which systematically addresses the limitations of matrix $$A$$ in conventional SSMs.
 
@@ -63,7 +64,7 @@ The **PATH-X** task is a binary classification task where the models are fed wit
 
 In general, the introduction of HiPPO into SSMs has shown remarkable improvements in various tasks that require processing long sequences, such as time series forecasting, speech recognition, and complex sequential reasoning. This has validated the theoretical underpinnings of HiPPO and demonstrated its practical efficacy across diverse domains.
 
-##### The Mamba model
+### The Mamba model
 
 ![Mass-spring-damper animation](/assets/images/blog/pages/ssm/ssm_3_img3.webp)
 
@@ -77,13 +78,13 @@ Gu _et al._ also introduce a second modification to speed up the computations of
 
 With these two modifications on the S4 model, Gu _et al._ presented this new and highly efficient architecture named **Structured State-Space model with Selective Scan for Sequences** (or S6), dubbed later on as Mamba for its _hissing_ acronym reminiscent of the serpentine sound, echoing the model's swift and powerful processing capabilities akin to the agility of a mamba snake.
 
-#### Applications
+## Applications
 
 The Mamba family of models has revolutionized sequence modeling by bridging the gap between the computational efficiency of state space models (SSMs) and the representational power required for diverse, high-dimensional data. Where traditional architectures like Transformers falter due to quadratic scaling or where convolutional neural networks struggle with long-range dependencies, Mamba models bring a refreshing balance of scalability, precision, and versatility.
 
 What makes Mamba truly exceptional is its ability to adapt across vastly different domains, from generating lifelike human motions to synthesizing high-resolution images, all while maintaining a hardware-aware efficiency that unlocks previously unattainable possibilities. Below, we explore the groundbreaking applications of Mamba models in vision, motion modelling, audio, language, and generative modeling—showcasing how this innovative framework is reshaping the future of machine learning.
 
-##### DiM: Diffusion Mamba for efficient high-resolution images
+### DiM: Diffusion Mamba for efficient high-resolution images
 
 [**Diffusion Mamba (DiM)**](https://arxiv.org/abs/2405.14224) demonstrates the versatility of the Mamba architecture by applying it to high-resolution image synthesis in diffusion models, a task traditionally dominated by resource-intensive Transformer-based architectures. While Transformers face significant computational challenges due to quadratic scaling, DiM capitalizes on Mamba's efficient state space model (SSM) design, repurposing it for two-dimensional image data. This adaptation underscores the power of Mamba as a scalable, hardware-aware sequence model capable of addressing diverse data structures.
 
@@ -99,7 +100,7 @@ In addition to these architectural adaptations, DiM employs a _"weak-to-strong"_
 
 By combining Mamba's efficiency with these specialized techniques, DiM achieves competitive performance in terms of FID-50K scores while significantly reducing computational costs compared to Transformer-based diffusion models. This work highlights Mamba's potential as a foundational model for efficient, scalable, and high-quality image generation.
 
-##### Motion Mamba: Efficient and Long Sequence Motion Generation
+### Motion Mamba: Efficient and Long Sequence Motion Generation
 
 [**Motion Mamba**](https://steve-zeyu-zhang.github.io/MotionMamba/) extends the capabilities of the Mamba architecture to human motion generation, addressing the challenges of long-sequence modeling and computational efficiency in generative motion tasks. Motion generation inherently involves modeling sequences of human poses over time, where maintaining coherence and consistency across hundreds or even thousands of frames is essential for generating realistic motion. Akin to the previously discussed [Diffusion Mamba](https://www.notion.so/Beyond-vanilla-SSMs-16967463eca580d4a9d5d7fbf26a2e5b?pvs=21) paper, here motion generation is achieved with a diffusive process, but Motion Mamba leverages a latent diffusion framework, which operates on compressed latent representations to efficiently model complex data distributions. Furthermore, Motion Mamba introduces two novel components: the **Hierarchical Temporal Mamba (HTM)** block and the **Bidirectional Spatial Mamba (BSM)** block.
 
@@ -111,7 +112,7 @@ The **BSM block** addresses spatial coherence by rearranging and scanning latent
 
 These innovations allow Motion Mamba to preserve motion consistency across frames and improve accuracy in temporal alignment. Compared to transformer-based diffusion models, Motion Mamba achieves up to 50% better FID scores and a fourfold increase in inference speed, as demonstrated on benchmarks like HumanML3D and KIT-ML. This pioneering integration of Mamba into motion generation showcases its potential for efficient, high-quality modeling of complex motion sequences.
 
-##### Vision Mamba: Efficient Visual Representation Learning with Bidirectional State Space Model
+### Vision Mamba: Efficient Visual Representation Learning with Bidirectional State Space Model
 
 [**Vision Mamba (ViM)**](https://arxiv.org/abs/2401.09417) explores the potential of Mamba as a generic backbone for vision tasks, addressing the computational inefficiencies and inductive biases of traditional architectures like Transformers and CNNs. Unlike hybrid approaches or convolution-based adaptations, ViM adopts a pure sequence modeling framework, processing images as flattened sequences of patches while leveraging bidirectional state space modeling to capture global visual context. To preserve spatial coherence, ViM incorporates positional embeddings and processes data bidirectionally within each block, enabling it to model high-resolution images without resorting to computationally expensive self-attention mechanisms.
 
@@ -123,7 +124,7 @@ Resultswise, ViM outperforms well-established vision backbones like Vision Trans
 
 By maintaining linear scaling with sequence length and removing image-specific inductive biases, ViM establishes itself as a versatile and efficient backbone for next-generation vision models.
 
-##### Audio Mamba: Bidirectional State Space Model for Audio Representation Learning
+### Audio Mamba: Bidirectional State Space Model for Audio Representation Learning
 
 [**Audio Mamba (AuM)**](https://arxiv.org/pdf/2406.03344) introduces a novel, self-attention-free architecture for audio classification, leveraging the efficiency of SSMs to address the computational challenges faced by transformer-based models. Traditional Audio Spectrogram Transformers (ASTs) particularly suffer from quadratic scaling, as the audio sequences are commonly very lengthy, making them expensive to encode. AuM replaces self-attention with bidirectional scanning, adapting the Mamba architecture for audio representation tasks. It processes audio spectrograms (which are provided as images to the model) by dividing them into square patches, embedding each patch into a sequence, and passing this sequence through a bidirectional Mamba encoder. This encoder processes data both forward and backward, ensuring spatial and temporal coherence while maintaining global context—similar to self-attention but significantly more efficient.
 
@@ -131,7 +132,7 @@ By maintaining linear scaling with sequence length and removing image-specific i
 
 AuM also introduces an innovative use of classification tokens, strategically placed at the sequence midpoint, to optimize bidirectional processing. Experiments show that AuM achieves comparable or superior performance to ASTs across six audio classification benchmarks while being **1.6 times faster** during inference and scaling linearly with sequence length. Its ability to handle long audio inputs with minimal memory consumption makes AuM a promising alternative for tasks requiring efficient audio representation, such as multimodal learning, audio-visual pretraining, and automatic speech recognition. This work demonstrates the potential of SSM-based architectures to redefine efficiency in audio processing.
 
-##### Hymba: A Hybrid-head Architecture for Small Language Models
+### Hymba: A Hybrid-head Architecture for Small Language Models
 
 [**Hymba**](https://arxiv.org/pdf/2411.13676) introduces a hybrid-head architecture for small language models, combining transformer attention mechanisms with Mamba-based state space models (SSMs) to balance high-resolution recall and efficient context summarization. The parallel fusion of attention and SSM heads allows Hymba to leverage the strengths of both: **attention heads act as “snapshot memories”**, capturing fine-grained details, while **SSM heads function as “fading memories”**, summarizing global context. This design avoids the bottlenecks of sequentially stacked modules and ensures efficient information processing across tasks.
 
@@ -139,7 +140,7 @@ AuM also introduces an innovative use of classification tokens, strategically pl
 
 To enhance its efficiency, Hymba proposes several key innovations. **Meta tokens**, a set of learned embeddings prepended to inputs, act as a "learned cache," guiding attention to focus on relevant information and improving both memory and reasoning efficiency. These tokens redistribute attention, preventing the wasteful focus on initial tokens (e.g., BOS tokens) often seen in transformer models. **KV cache optimization** introduces a blend of local (sliding window) and global attention, reducing the memory and computational demands of traditional full attention. The inclusion of SSM heads further supports global context summarization, enabling more aggressive use of local attention without losing essential context. Together, these innovations reduce KV cache size by up to 4× and boost throughput by 3× while maintaining high task performance. With these advancements, Hymba achieves state-of-the-art results in both accuracy and efficiency, setting a new benchmark for small language models.
 
-##### SeRpEnt: Selective Resampling for Expressive State Space Models
+### SeRpEnt: Selective Resampling for Expressive State Space Models
 
 This work, produced by ItalAI, represents a theoretical advancement in the field of state space models SSMs, focusing on enhancing sequence compression and information efficiency. Building on the success of Mamba's learned [selectivity mechanism](https://www.notion.so/Beyond-vanilla-SSMs-16967463eca580d4a9d5d7fbf26a2e5b?pvs=21), which empirically improves SSM performance, SeRpEnt provides a formal analysis of selectivity, demonstrating that the learned time intervals in Mamba serve as linear approximators of the information content contained in the sequence elements. This insight lays the foundation for SeRpEnt's key innovation: a selective resampling mechanism that compresses sequences by aggregating elements based on their informational relevance.
 

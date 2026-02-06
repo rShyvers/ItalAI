@@ -9,6 +9,4 @@
 /lighthouse-reports
 
 # Images - only track WebP format
-*.jpg
-*.jpeg
-*.png
+*.webp

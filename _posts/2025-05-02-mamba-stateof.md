@@ -1,6 +1,8 @@
 ---
 layout: post
 title: "🚀 The State Space Models"
+description: "ItalAI deep dive into State Space Models (SSMs): from 1960s control theory to modern AI. Explore continuous and discrete SSMs, mass-spring-damper systems, recurrent vs convolutional representations, and how Kalman's framework powers today's sequence modeling architectures."
+image: "/assets/images/blog/cards/ssm.webp"
 category: "Transformers"
 hero_image: "/assets/images/blog/cards/ssm.webp"
 excerpt: "Is there an alternative to transformer networks?"
@@ -10,16 +12,14 @@ published_in_blog: true
 author: "Guido Maria D'Amely di Melendugno"
 ---
 
-### 🚀 The State Space Models
-
 * TOC
 {:toc}
 
-### Brief Historical Context 
+## Brief Historical Context 
 
 The story of State Space Models (SSMs) is a fascinating journey that spans over six decades, from the Space Race to today's cutting-edge AI models like Mamba. Let's explore how a mathematical framework designed to guide rockets became a cornerstone of modern sequence modeling.
 
-##### 🌔 The Space Race and Beyond
+### 🌔 The Space Race and Beyond
 
 In the early 1960s, as NASA was racing to put humans on the moon, they faced a critical challenge: how to precisely track and control spacecraft trajectories. Meanwhile, a breakthrough was emerging from the work of [Rudolf Kalman](https://en.wikipedia.org/wiki/Rudolf_E._K%C3%A1lm%C3%A1n), whose elegant mathematical framework for control theory would far outlive its original purpose. Indeed, in 1960, Kalman introduced what we now know as State Space Models.
 
@@ -27,7 +27,7 @@ The core idea was elegant yet powerful: any system could be described by its "st
 
 Throughout the 1970s and 1980s, SSMs expanded beyond aerospace into diverse fields. Engineers deployed them to control chemical plants and robotic systems, while economists adopted them for financial forecasting. Their ability to handle complex, dynamic systems while managing uncertainty made them invaluable across industries.
 
-##### 📈 The SSMs in the Machine Learning Era
+### 📈 The SSMs in the Machine Learning Era
 
 As machine learning gained momentum in the 1990s and 2000s, researchers noticed parallels between SSMs and popular AI architectures. Hidden Markov Models, widely used in speech recognition, could be viewed as discrete versions of SSMs. Recurrent Neural Networks (RNNs), the early workhorses of sequence modeling, shared similar mathematical foundations.
 
@@ -39,7 +39,7 @@ This sparked a renaissance in SSM research. The mathematical foundations laid do
 
 After this brief recap about where SSMs came from, we can now dive into **how they actually work**. In the next section, we'll explore the core mathematical components of SSMs through a practical example, illustrating how the concept of an internal “state” allows these models to handle everything from noisy sensor readings to complex time-series predictions.
 
-### The State Space Models
+## The State Space Models
 
 State Space Models (SSMs) are a versatile mathematical framework used to describe dynamic systems. At their core, SSMs capture how a system evolves over time through a set of internal states influenced by external inputs while providing observable outputs that depend on these states. This framework is built on two main equations:
 
@@ -59,7 +59,7 @@ SSMs are extensively applied in fields like physics, engineering, economics, and
 
 The next chapter will introduce two illustrative examples to contextualize the concepts: one rooted in physics, showcasing a **continuous-time SSM**, and another more heuristic, featuring a **discrete-time SSM** through the racing car analogy. After exploring these examples, we will delve into the mathematical details of SSMs, examining their features, discretization methods, and dual representation as recurrent models and convolutional operations.
 
-##### 🪝 Mass-Spring-Damper System
+### 🪝 Mass-Spring-Damper System
 
 Consider a mass-spring-damper system where a mass $$(m)$$ is attached to a fixed wall by a spring with elastic constant $$k$$ and a damper with friction coefficient $$b$$. The system's position $$(y(t))$$ evolves over time as a varying external force $$(x(t))$$ is applied to the mass.
 
@@ -187,7 +187,7 @@ By fixing the values for all the constants and forces applied to the system, we 
 
 ![Mass-spring-damper animation](/assets/images/blog/pages/ssm/ssm_2_img1.gif)
 
-##### 🏎️ The Racing Car example
+### 🏎️ The Racing Car example
 
 Imagine having a racing car that you want to keep in a good state to win competitions. To do so, you have to monitor the car's state daily and perform some operations to address any problems that can arise. In the context of SSMs, we can break down the dynamics of this process as follows:
 
@@ -240,7 +240,7 @@ Leveraging these two equations, you can control the racing car's performance or,
 
 This simple example provides a tangible introduction to the dynamics modeled by SSMs, illustrating how states, actions, and outputs are interconnected. We're ready to explore more complex systems and their applications with this foundation.
 
-##### 📐 Mathematical Formalization
+### 📐 Mathematical Formalization
 
 We have then summarized the interaction between these components in the two equations below:
 
@@ -273,11 +273,11 @@ Let's have a more fine-grained look at the twos:
     *   **C**: Defines how each aspect of the internal state influences the performance.
     *   **D**: Represents the direct effects of the reparations on the speed.
 
-### Properties of State Space Models
+## Properties of State Space Models
 
 Building on the intuitive example of the racing car, we now move to a more general and formal description of State Space Models (SSMs) in **continuous time**, which is essential for many real-world applications where processes evolve continuously rather than in discrete steps.
 
-##### The General Continuous-Time Model
+### The General Continuous-Time Model
 
 At their core, SSMs in continuous time describe the evolution of a system's internal state $$h(t)$$ over time, influenced by external inputs $$x(t)$$. The mathematical representation consists of two key equations:
 
@@ -308,7 +308,7 @@ The following figure describes the whole SSM!
 
 It is worth noting that all the matrices just introduced do not depend on time, making the SSMs a time-invariant model. Moreover, we only use matrix multiplications to get the results, so we can acknowledge the SSMs as **Linear Time Invariant (LTI)** models.
 
-##### From Continuous Time to Discrete Observations
+### From Continuous Time to Discrete Observations
 
 Many real-world systems operate in continuous time, but digital computers inherently process data in discrete intervals. For instance, when monitoring a physical process like temperature changes (which is inherently a continuos-time phenomenon), we typically record measurements at fixed time intervals—say, every second or minute. Similarly, in machine learning, sequence models often work with time series or sampled signals, which are inherently discrete.
 
@@ -350,7 +350,7 @@ $$
 
 The discretization bridges the gap between continuous theoretical models and their practical implementation in digital systems, enabling applications such as real-time simulations, control systems, and machine learning pipelines. Choosing the right discretization method can mean the difference between a simulation that mirrors reality and one that diverges wildly. For example, in real-time control systems, precise discretization ensures that interventions are accurately timed and effective, while in sequence modeling, it enables SSMs to efficiently process input sequences and generate meaningful predictions. In short, discretization unlocks the practical utility of SSMs across a wide range of digital applications.
 
-##### Dual Nature of SSMs: Recurrent and Convolutional Representations
+### Dual Nature of SSMs: Recurrent and Convolutional Representations
 
 One of the unique strengths of State Space Models is their dual nature: they can be expressed both as **recurrent models** and as **convolutional operations**. This versatility makes SSMs particularly powerful in sequence modeling and signal processing.
 
@@ -386,7 +386,7 @@ $$
 
 The convolutional form is particularly efficient for parallel computation, as it allows for batched operations across the entire sequence, making it suitable for modern hardware like GPUs.
 
-##### Advantages of SSMs against current architectures
+### Advantages of SSMs against current architectures
 
 As sequence modeling tasks grow increasingly complex—ranging from processing entire books to analyzing hours of video—limitations in current approaches become evident. RNNs , while efficient in terms of computation (their operations scale linearly with the input length as each step requires a fixed amount of time), struggle with retaining information over long sequences due to vanishing gradients. Transformers, on the other hand, excel at capturing long-range dependencies and allow for parallel computation across sequences, but their self-attention mechanism introduces quadratic memory and computational scaling, making them resource-intensive for very long inputs.
 

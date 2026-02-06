@@ -7,7 +7,9 @@ gem "jekyll"
 gem "ruby-vips"
 
 group :jekyll_plugins do
+  gem 'parallel'
   gem "jekyll-sitemap"
   gem "jekyll-seo-tag"
+  gem 'jekyll-minifier'
   gem 'kramdown-math-katex'
 end

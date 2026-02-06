@@ -44,35 +44,35 @@ layout: default
       <aside class="post-sidebar">
         <!-- Post Categories -->
         <div class="sidebar-widget">
-          <h3 class="sidebar-title">TAGS</h3>
+          <h2 class="sidebar-title h5-size">TAGS</h2>
           <div class="category-tags">
             {% if page.categories %}
               {% for category in page.categories %}
-              <a href="/insights/?category={{ category | slugify }}" class="category-tag">{{ category | upcase }}</a>
+              <a href="/insights/?category={{ category | slugify }}" class="filter-btn">{{ category | upcase }}</a>
               {% endfor %}
             {% elsif page.category %}
-              <a href="/insights/?category={{ page.category | slugify }}" class="category-tag">{{ page.category | upcase }}</a>
+              <a href="/insights/?category={{ page.category | slugify }}" class="filter-btn">{{ page.category | upcase }}</a>
             {% endif %}
           </div>
         </div>
 
         <!-- Recent Posts -->
         <div class="sidebar-widget">
-          <h3 class="sidebar-title">RECENT POSTS</h3>
+          <h2 class="sidebar-title h5-size">RECENT POSTS</h2>
           <div class="recent-posts">
             {% comment %}
             Sort posts by date (descending), then by series and part number.
             For posts with the same date, sort by part number (ascending) so Part 1 comes before Part 2.
             {% endcomment %}
             {% assign sorted_posts = site.posts | where_exp: "post", "post.published_in_blog != false" | sort: "part" | sort: "date" | reverse %}
-            {% assign recent_posts = sorted_posts | limit: 3 %}
-            {% for post in recent_posts %}
+            {% for i in (0..2) %}
+            {% assign post = sorted_posts[i] %}
             <a href="{{ post.url }}" class="recent-post-item">
-              {% if post.hero_image %}
-              <img src="{{ post.hero_image }}" alt="{{ post.title }}" class="recent-post-thumb">
-              {% endif %} 
+              <div style="position: relative">
+                <span class="recent-post-date">{{ post.date | date: "%d-%b-%Y" }}</span>
+                <img src="{{ post.hero_image }}" alt="{{ post.title }}" class="recent-post-thumb">
+              </div>
               <div class="recent-post-info">
-                <p class="recent-post-date">{{ post.date | date: "%d-%B-%Y" }}</p>
                 <p class="recent-post-title">{{ post.title | strip_html }}</p>
                 <p class="recent-post-excerpt">{{ post.excerpt | strip_html }}</p>
               </div>
@@ -114,7 +114,7 @@ layout: default
           {% endif %}
         {% endfor %}
         <div class="post-author">
-          <h4>BY {{ author_name | upcase }}</h4>
+          <h4 class="h4-size">BY {{ author_name | upcase }}</h4>
           {% if author_data %}
             {% assign author_excerpt = author_data.excerpt | default: author_data.bio %}
             {% if author_excerpt %}

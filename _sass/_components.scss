@@ -26,6 +26,7 @@
     font-style: italic;
     white-space: nowrap;
     text-transform: uppercase;
+    font-family: var(--header-family);
 }
 
 %cta-button-base {
@@ -83,6 +84,8 @@
     color: var(--standard-dark);
     width: auto;
     box-shadow: 0 4px 19.3px 0 var(--standard-light-alt);
+    cursor: pointer;
+    border: 2px solid transparent;
     &:hover,
     &.selected {
         box-shadow: 0 4px 19.3px 0 var(--standard-blue);
@@ -190,7 +193,7 @@
     z-index: 2;
 }
 
-.common-hero-content h2 {
+.common-hero-content h1 {
     font-weight: 800;
     line-height: 1.2;
     margin: auto 0;
@@ -207,9 +210,10 @@
     border-radius: var(--radius-md);
     gap: var(--space-sm);
     z-index: 2;
+    font-family: var(--header-family);
 }
 
-.breadcrumb span {
+.breadcrumb span:not(.strong) {
     font-weight: 400;
 }
 
@@ -227,10 +231,12 @@
     overflow: hidden;
     text-wrap: nowrap;
     text-align: right;
+    font-family: var(--body-family);
 }
 
 .section-label {
     font-family: var(--header-family);
+    font-size: var(--h7-size);
     text-transform: uppercase;
     color: var(--standard-green);
 }
@@ -270,7 +276,7 @@
 
 strong,
 .strong {
-    font-weight: 700;
+    font-weight: 800;
 }
 weak,
 .weak {
@@ -281,6 +287,11 @@ weak,
 }
 .lowercase {
     text-transform: lowercase;
+}
+
+.emphasis {
+  color: var(--standard-blue);
+  font-weight: 600;
 }
 
 /* Universal Animations */
@@ -303,11 +314,18 @@ weak,
     animation-play-state: running;
 }
 
+/* No-JS fallback: show all cards in final state (no animation) */
+.no-js .card-animated {
+    opacity: 1;
+    animation: none;
+}
+
 .word {
     white-space: nowrap;
     perspective: 800px;
     perspective-origin: 50% 50%;
 }
+
 .char {
     display: inline-flex;
     justify-content: flex-start;
@@ -321,8 +339,15 @@ weak,
     animation-play-state: paused;
 }
 
-.header-animated.is-visible {
+.char.header-animated.is-visible {
     animation-play-state: running;
+}
+
+/* No-JS fallback: show headers in final state (no animation) */
+.no-js .char {
+    opacity: 1;
+    transform: rotateX(0);
+    animation: none;
 }
 
 @keyframes fadeIn {

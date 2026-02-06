@@ -82,11 +82,11 @@
   title: "System-Level AI Design"
   type: "text"
   content: |
-    We design AI at the _system level_, not as isolated models. 
+    We design AI at the _**system level**_, not as isolated models. 
     
-    Our work spans the _full stack_: from data pipelines and learning architectures to deployment constraints, compute efficiency, and long-term maintainability. 
+    Our work spans the _**full stack**_: from data pipelines and learning architectures to deployment constraints, compute efficiency, and long-term maintainability. 
     
-    We focus on how components interact in _real settings_ — where perception, decision-making, and learning must operate together under latency, reliability, and safety constraints. 
+    We focus on how components interact in real settings — where perception, decision-making, and learning must operate together under latency, reliability, and safety constraints. 
     
     **This approach allows us to build AI systems that are not only performant in controlled environments, but stable and scalable in production.**
 
