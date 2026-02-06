@@ -27,17 +27,21 @@ module ItalAI
       @cache_manifest_path = File.join(site.source, CACHE_FILENAME)
       @cache_manifest = load_cache_manifest
       
+      puts "[vips-webp] Cache manifest path: #{@cache_manifest_path}"
+      puts "[vips-webp] Cache entries loaded: #{@cache_manifest.size}"
+      
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
       end
       
-      # Process sequentially to avoid cache issues
-      # Parallel processing doesn't work well with shared cache state
+      puts "[vips-webp] Found #{paths.size} source images to process"
+      
       paths.each do |path|
         generate_responsive_images(path)
       end
       
       save_cache_manifest
+      puts "[vips-webp] Cache manifest saved with #{@cache_manifest.size} entries"
     end
 
     def self.generate_responsive_images(path)
@@ -49,20 +53,35 @@ module ItalAI
         
         # Check cache before loading image (more efficient)
         cache_entry = @cache_manifest[path]
-        if cache_entry && cache_entry["sha256"] == fingerprint
-          # Verify outputs still exist
-          if outputs_present?(base_path, cache_entry["width"])
-            puts "[vips-webp] ✓ #{File.basename(path)} (cached)"
-            return
+        
+        if cache_entry
+          puts "[vips-webp] DEBUG: Cache entry found for #{File.basename(path)}"
+          puts "[vips-webp] DEBUG: Cached SHA256: #{cache_entry['sha256'][0..10]}..."
+          puts "[vips-webp] DEBUG: Current SHA256: #{fingerprint[0..10]}..."
+          puts "[vips-webp] DEBUG: Match: #{cache_entry['sha256'] == fingerprint}"
+          
+          if cache_entry["sha256"] == fingerprint
+            # Verify outputs still exist
+            if outputs_present?(base_path, cache_entry["width"])
+              puts "[vips-webp] ✓ #{File.basename(path)} (cached)"
+              return
+            else
+              puts "[vips-webp] ⚠ #{File.basename(path)} (cache stale - files missing)"
+            end
           else
-            puts "[vips-webp] ⚠ #{File.basename(path)} (cache stale, regenerating)"
+            puts "[vips-webp] ⚠ #{File.basename(path)} (cache stale - file changed)"
           end
+        else
+          puts "[vips-webp] No cache entry for #{File.basename(path)}"
         end
 
         # Load image
         image = Vips::Image.new_from_file(path, access: :random)
         image = image.autorot if image.respond_to?(:autorot)
         original_width = image.width
+
+        # Clean up any stale files BEFORE generating new ones
+        cleanup_stale_responsive_images(base_path, original_width)
 
         # Generate the base .webp file (for src attribute)
         base_webp_path = "#{base_path}.webp"
@@ -96,8 +115,6 @@ module ItalAI
           end
         end
 
-        cleanup_stale_responsive_images(base_path, original_width)
-
         # Update cache
         @cache_manifest[path] = {
           "sha256" => fingerprint,
@@ -124,16 +141,23 @@ module ItalAI
 
     def self.cleanup_stale_responsive_images(base_path, original_width)
       expected_sizes = SIZES.select { |w| w <= original_width }
+      
+      # Get the directory and base filename
+      dir = File.dirname(base_path)
+      base_name = File.basename(base_path)
 
-      Dir.glob("#{base_path}-*w.webp").each do |path|
-        match = /-(\d+)w\.webp\z/i.match(path)
+      # Only look for files that match THIS specific base name
+      pattern = File.join(dir, "#{base_name}-*w.webp")
+      
+      Dir.glob(pattern).each do |webp_path|
+        match = /-(\d+)w\.webp\z/i.match(webp_path)
         next unless match
 
         width = match[1].to_i
         next if expected_sizes.include?(width)
 
-        File.delete(path)
-        puts "[vips-webp] removed stale #{File.basename(path)}"
+        File.delete(webp_path)
+        puts "[vips-webp] removed stale #{File.basename(webp_path)}"
       end
     rescue StandardError => e
       warn "[vips-webp] failed to clean stale images for #{File.basename(base_path)}: #{e.message}"

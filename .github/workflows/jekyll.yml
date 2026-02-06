@@ -48,7 +48,7 @@ jobs:
           path: |
             assets/images/**/*.webp
             .webp-cache.json
-          key: ${{ runner.os }}-webp-${{ hashFiles('assets/images/**/*.jpg', 'assets/images/**/*.jpeg', 'assets/images/**/*.png', 'assets/images/**/*.gif', '.webp-cache.json') }}-v3
+          key: ${{ runner.os }}-webp-${{ hashFiles('assets/images/**/*.jpg', 'assets/images/**/*.jpeg', 'assets/images/**/*.png', 'assets/images/**/*.gif') }}-v3
           restore-keys: |
             ${{ runner.os }}-webp-
       
