@@ -5,7 +5,7 @@
          data-flowmap-width="1880" 
          data-flowmap-height="789">
     {% if include.bg_image %}
-        <img src="{{ include.bg_image }}" alt="" loading="lazy">
+        <img src="{{ include.bg_image }}" alt="" loading="eager" fetchpriority="high">
     {% endif %}
     <div class="container">
         <div class="main-hero-content">
@@ -26,9 +26,9 @@
         <div class="spacer">
             <div class="common-hero-content" {% if include.hero-style %} style="{{ include.hero-style }}"{% endif %}>  
             {% if include.bg_image %}
-                <img src="{{ include.bg_image }}" alt="" loading="lazy">
+                <img src="{{ include.bg_image }}" alt="" loading="eager" fetchpriority="high">
             {% endif %}
-                <h1 class="common-hero-title h3-size" {% if include.title-style %}style="{{ include.title-style }}"{% endif %}>{{ include.heading }}</h1>
+                <h1 class="common-hero-title {{ include.title_class | default: "h3-size" }}" {% if include.title-style %}style="{{ include.title-style }}"{% endif %}>{{ include.heading }}</h1>
                 <div class="breadcrumb"{% if include.breadcrumb-style %} style="{{ include.breadcrumb-style }}"{% endif %}>
                     <span class="breadcrumb-trail">
                         <a href="/">HOME</a> /

@@ -4,12 +4,20 @@
     const itemsShown = document.getElementById("itemsShown");
     const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
     const categoryDropdown = document.getElementById("categoryDropdown");
+    const clearFilterBtn = document.getElementById("clearFilter");
+    const filterCount = document.getElementById("filterCount");
 
     if (!grid) return;
 
     const BASE_PATH = "/assets/data/insights/insights-page1.json";
     const CATEGORY_BASE = "/assets/data/insights/categories/category-";
     const USE_NDJSON = true; // prefer streaming when CDN allows
+
+    const TRANSITIONS = {
+        fadeOutMs: 240,
+        swapDelayMs: 80,
+        fadeInMs: 340,
+    };
 
     const state = {
         currentCategory: "all",
@@ -18,7 +26,33 @@
         totalPages: 0,
         perPage: 12,
         loadedPages: new Set(),
+        transitioning: false,
     };
+
+    const GRID_PHASES = ["cards-exit", "cards-enter", "cards-active"];
+
+    function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function nextFrame() {
+        return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    }
+
+    function setGridPhase(phase) {
+        grid.classList.remove(...GRID_PHASES);
+        if (phase) grid.classList.add(phase);
+    }
+
+    function setControlsDisabled(disabled) {
+        filterButtons.forEach((btn) => {
+            btn.disabled = disabled;
+            btn.setAttribute("aria-disabled", String(disabled));
+        });
+        if (categoryDropdown) categoryDropdown.disabled = disabled;
+        if (clearFilterBtn) clearFilterBtn.disabled = disabled;
+        if (loadMoreBtn) loadMoreBtn.disabled = disabled;
+    }
 
     async function fetchNdjson(url) {
         const res = await fetch(url);
@@ -95,7 +129,7 @@
       </div>
       <div class="insight-card-content">
         <a class="insight-card-title" href="${item.url}">
-          <h7 class="insight-card-title">${escapeHtml(item.title || "")}</h7>
+          <h3 class="insight-card-title h7-size">${escapeHtml(item.title || "")}</h3>
           <p class="insight-card-excerpt">
               ${escapeHtml(item.excerpt || "")}
           </p>
@@ -174,6 +208,29 @@
             typeof totalAvailable === "number" ? totalAvailable : renderedCount;
         itemsShown.textContent = `Showing ${renderedCount} of ${total} insights`;
     }
+    
+    function updateFilterUI() {
+        const isFiltered = state.currentCategory !== "all";
+        
+        // Update clear filter button visibility
+        if (clearFilterBtn) {
+            clearFilterBtn.style.display = isFiltered ? "flex" : "none";
+        }
+        
+        // Update top filter count
+        if (filterCount) {
+            const renderedCount = grid.querySelectorAll(".insight-card").length;
+            if (isFiltered) {
+                const categoryName = state.currentCategory
+                    .split("-")
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ");
+                filterCount.textContent = `Showing ${renderedCount} insights in ${categoryName}`;
+            } else {
+                filterCount.textContent = `Showing ${renderedCount} insights`;
+            }
+        }
+    }
 
     function toggleLoadMore(visible) {
         if (!loadMoreBtn) return;
@@ -186,7 +243,7 @@
             tag.addEventListener("click", (e) => {
                 e.preventDefault();
                 const slug = tag.getAttribute("data-tag-category");
-                applyFilter(slug);
+                runFilterTransition(slug);
                 window.location.hash = "filter"; // Navigate to #filter
             });
         });
@@ -211,6 +268,7 @@
             updateMeta(meta);
             const renderedCount = grid.querySelectorAll(".insight-card").length;
             updateCounters(renderedCount, meta.total_items);
+            updateFilterUI();
             toggleLoadMore(Boolean(meta.next_page_path));
             state.loadedPages.add(url);
         } catch (err) {
@@ -226,14 +284,35 @@
         return `/assets/data/insights/insights-page${pageNum}.json`;
     }
 
-    async function applyFilter(categorySlug) {
+    async function swapFilterData(categorySlug) {
         state.currentCategory = categorySlug || "all";
         state.loadedPages.clear();
         const path = buildPath(1, state.currentCategory);
         await loadPage(path, { reset: true });
     }
 
+    async function runFilterTransition(categorySlug) {
+        if (state.transitioning) return;
+        state.transitioning = true;
+        setControlsDisabled(true);
+
+        setGridPhase("cards-exit");
+        await delay(TRANSITIONS.fadeOutMs);
+
+        setGridPhase("cards-enter");
+        await swapFilterData(categorySlug);
+        await nextFrame();
+        await delay(TRANSITIONS.swapDelayMs);
+
+        setGridPhase("cards-active");
+        await delay(TRANSITIONS.fadeInMs);
+
+        setControlsDisabled(false);
+        state.transitioning = false;
+    }
+
     async function handleLoadMore() {
+        if (state.transitioning) return;
         if (!state.nextPagePath) {
             toggleLoadMore(false);
             return;
@@ -250,7 +329,7 @@
                 btn.classList.add("active");
                 const cat = btn.getAttribute("data-category");
                 if (categoryDropdown) categoryDropdown.value = cat;
-                applyFilter(cat);
+                runFilterTransition(cat);
             });
         });
 
@@ -262,7 +341,17 @@
                     (b) => b.getAttribute("data-category") === cat,
                 );
                 if (match) match.classList.add("active");
-                applyFilter(cat);
+                runFilterTransition(cat);
+            });
+        }
+        
+        if (clearFilterBtn) {
+            clearFilterBtn.addEventListener("click", () => {
+                filterButtons.forEach((b) => b.classList.remove("active"));
+                const allBtn = filterButtons.find((b) => b.getAttribute("data-category") === "all");
+                if (allBtn) allBtn.classList.add("active");
+                if (categoryDropdown) categoryDropdown.value = "all";
+                runFilterTransition("all");
             });
         }
     }
@@ -272,10 +361,31 @@
         loadMoreBtn.addEventListener("click", handleLoadMore);
     }
 
+    function setupInitialState() {
+        const renderedCount = grid.querySelectorAll(".insight-card").length;
+        const totalItems = Number(grid.dataset.totalItems) || renderedCount;
+        const perPage = Number(grid.dataset.perPage) || state.perPage;
+        const nextPage = grid.dataset.nextPage || null;
+
+        state.currentCategory = "all";
+        state.totalItems = totalItems;
+        state.perPage = perPage;
+        state.totalPages = perPage ? Math.ceil(totalItems / perPage) : 0;
+        state.nextPagePath = nextPage || null;
+
+        if (nextPage) state.loadedPages.add(BASE_PATH);
+
+        updateCounters(renderedCount, totalItems);
+        updateFilterUI();
+        toggleLoadMore(Boolean(nextPage));
+        attachTagHandlers(grid);
+        setGridPhase("cards-active");
+    }
+
     async function init() {
         bindFilters();
         bindLoadMore();
-        await applyFilter("all");
+        setupInitialState();
     }
 
     document.addEventListener("DOMContentLoaded", init);

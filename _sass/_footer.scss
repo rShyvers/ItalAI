@@ -70,9 +70,10 @@
             }
 
             .social-icon {
-                width: var(--icon-size, 24px);
+                font-size: 2rem;
                 fill: var(--standard-blue);
                 text-decoration: none;
+                display: inline;
             }
         }
     }

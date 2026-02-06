@@ -9,8 +9,8 @@ Jekyll::Hooks.register [:posts, :pages, :documents], :post_render do |doc|
   doc.output = doc.output.gsub(/<img(?![^>]*\sloading=)([^>]*)>/) do |match|
     attributes = $1
     
-    # Don't add lazy to images that explicitly set loading or have data-no-lazy
-    next match if attributes.include?('data-no-lazy')
+    # Don't add lazy to images that explicitly set loading, have data-no-lazy, or have fetchpriority (LCP images)
+    next match if attributes.include?('data-no-lazy') || attributes.include?('fetchpriority')
     
     # Add loading="lazy" before the closing >
     "<img#{attributes} loading=\"lazy\">"
