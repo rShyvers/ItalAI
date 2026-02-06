@@ -42,27 +42,6 @@ jobs:
           bundler-cache: true
           cache-version: 0
       
-      - name: Cache generated WebP images
-        uses: actions/cache@v4
-        with:
-          path: |
-            assets/images/**/*.webp
-            .webp-cache.json
-          key: ${{ runner.os }}-webp-${{ hashFiles('assets/images/**/*.jpg', 'assets/images/**/*.jpeg', 'assets/images/**/*.png', 'assets/images/**/*.gif') }}-v3
-          restore-keys: |
-            ${{ runner.os }}-webp-
-
-      - name: Debug cache contents
-        run: |
-          ls -la .webp-cache.json || true
-          if [ -f .webp-cache.json ]; then
-            echo "--- .webp-cache.json ---"
-            cat .webp-cache.json
-            echo "--- end ---"
-          else
-            echo "No .webp-cache.json found after cache restore"
-          fi
-      
       - name: Install libvips
         run: |
           sudo apt-get update

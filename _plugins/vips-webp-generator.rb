@@ -9,12 +9,11 @@ module ItalAI
     SIZES = [400, 800, 1200, 1600].freeze
     QUALITY = 78  # Reduced for better compression
     EFFORT = 6    # Increased for better compression
-    CACHE_FILENAME = ".webp-cache.json".freeze
+    SAVE_OPTIONS = { Q: QUALITY, effort: EFFORT, strip: true }.freeze
 
     def self.run(site)
       require "vips"
-      require "json"
-      require "digest"
+      require "etc"
     rescue LoadError => e
       warn "[vips-webp] ruby-vips not available: #{e.message}"
       warn "[vips-webp] Responsive images must be pre-generated locally or in CI"
@@ -24,13 +23,7 @@ module ItalAI
       image_dir = File.join(site.source, "assets", "images")
       return unless Dir.exist?(image_dir)
 
-      @cache_base = site.source
-      @cache_manifest_path = File.join(site.source, CACHE_FILENAME)
-      @cache_manifest = load_cache_manifest
-      
-      puts "[vips-webp] Cache manifest path: #{@cache_manifest_path}"
-      puts "[vips-webp] Cache entries loaded: #{@cache_manifest.size}"
-      puts "[vips-webp] Cache manifest contents:\n#{JSON.pretty_generate(@cache_manifest)}"
+      @force_regen = ENV["WEBP_FORCE_REGEN"] == "1"
       
       paths = Dir.glob(File.join(image_dir, "**", "*"), File::FNM_CASEFOLD).select do |path|
         IMAGE_EXTS.include?(File.extname(path).downcase) && !(File.basename(path) =~ /-\d+w\.webp$/i)
@@ -38,52 +31,52 @@ module ItalAI
       
       puts "[vips-webp] Found #{paths.size} source images to process"
       
-      paths.each do |path|
-        generate_responsive_images(path)
+      worker_count = ENV.fetch("WEBP_WORKERS", [Etc.nprocessors, 2].min).to_i
+      worker_count = 1 if worker_count < 1
+
+      if worker_count == 1
+        paths.each do |path|
+          generate_responsive_images(path)
+        end
+      else
+        queue = Queue.new
+        paths.each { |path| queue << path }
+
+        workers = Array.new(worker_count) do
+          Thread.new do
+            loop do
+              path = queue.pop(true) rescue nil
+              break unless path
+
+              generate_responsive_images(path)
+            end
+          end
+        end
+
+        workers.each(&:join)
       end
       
-      save_cache_manifest
-      puts "[vips-webp] Cache manifest saved with #{@cache_manifest.size} entries"
     end
 
     def self.generate_responsive_images(path)
       base_path = path.sub(/\.(jpe?g|png)\z/i, "")
       
       begin
-        # Calculate fingerprint first
-        fingerprint = Digest::SHA256.file(path).hexdigest
-        
-        # Check cache before loading image (more efficient)
-        cache_key = cache_key_for(path)
-        cache_entry = @cache_manifest[cache_key]
-        if !cache_entry && @cache_manifest[path]
-          cache_entry = @cache_manifest[path]
-          @cache_manifest.delete(path)
-          @cache_manifest[cache_key] = cache_entry
-        end
-        
-        if cache_entry
-          puts "[vips-webp] DEBUG: Cache entry found for #{File.basename(path)}"
-          puts "[vips-webp] DEBUG: Cached SHA256: #{cache_entry['sha256'][0..10]}..."
-          puts "[vips-webp] DEBUG: Current SHA256: #{fingerprint[0..10]}..."
-          puts "[vips-webp] DEBUG: Match: #{cache_entry['sha256'] == fingerprint}"
-          
-          if cache_entry["sha256"] == fingerprint
-            # Verify outputs still exist
-            if outputs_present?(base_path, cache_entry["width"])
-              puts "[vips-webp] ✓ #{File.basename(path)} (cached)"
+        source_mtime = File.mtime(path)
+
+        # Fast path: if outputs exist and are newer than source, skip entirely
+        unless @force_regen
+          cleanup_zero_outputs(base_path)
+          if base_output_fresh?(base_path, source_mtime)
+            original_width = read_image_width(path)
+            if outputs_fresh?(base_path, source_mtime, original_width)
+              puts "[vips-webp] ✓ #{File.basename(path)} (fresh outputs)"
               return
-            else
-              puts "[vips-webp] ⚠ #{File.basename(path)} (cache stale - files missing)"
             end
-          else
-            puts "[vips-webp] ⚠ #{File.basename(path)} (cache stale - file changed)"
           end
-        else
-          puts "[vips-webp] No cache entry for #{File.basename(path)}"
         end
 
-        # Load image
+        # Load image for processing
         image = Vips::Image.new_from_file(path, access: :random)
         image = image.autorot if image.respond_to?(:autorot)
         original_width = image.width
@@ -93,10 +86,8 @@ module ItalAI
 
         # Generate the base .webp file (for src attribute)
         base_webp_path = "#{base_path}.webp"
-        save_options = { Q: QUALITY, effort: EFFORT, strip: true }
-        
-        image.webpsave(base_webp_path, **save_options)
-        if File.exist?(base_webp_path) && File.size(base_webp_path) > 0
+        image.webpsave(base_webp_path, **SAVE_OPTIONS)
+        if File.size?(base_webp_path)
           puts "[vips-webp] #{File.basename(path)} -> #{File.basename(base_webp_path)}"
         else
           File.delete(base_webp_path) if File.exist?(base_webp_path)
@@ -105,52 +96,85 @@ module ItalAI
         end
 
         # Generate responsive sizes (for srcset attribute)
-        generated_sizes = []
         SIZES.each do |width|
           next if width > original_width
           
           webp_path = "#{base_path}-#{width}w.webp"
           resized = image.thumbnail_image(width)
-          resized.webpsave(webp_path, **save_options)
+          resized.webpsave(webp_path, **SAVE_OPTIONS)
           
           # Verify the file was created successfully
-          if File.exist?(webp_path) && File.size(webp_path) > 0
+          if File.size?(webp_path)
             puts "[vips-webp] #{File.basename(path)} -> #{File.basename(webp_path)}"
-            generated_sizes << width
           else
             File.delete(webp_path) if File.exist?(webp_path)
             warn "[vips-webp] failed to generate #{File.basename(webp_path)} - file is empty"
           end
         end
-
-        # Update cache
-        @cache_manifest[cache_key] = {
-          "sha256" => fingerprint,
-          "width" => original_width,
-          "sizes" => generated_sizes
-        }
       rescue StandardError => e
         warn "[vips-webp] failed on #{path}: #{e.message}"
       end
     end
 
-    def self.cache_key_for(path)
-      return path unless @cache_base && path.start_with?(@cache_base)
-
-      path.sub(@cache_base + File::SEPARATOR, "")
+    def self.base_output_fresh?(base_path, source_mtime)
+      base_webp_path = "#{base_path}.webp"
+      if File.exist?(base_webp_path) && !File.size?(base_webp_path)
+        File.delete(base_webp_path)
+        return false
+      end
+      return false unless File.size?(base_webp_path)
+      File.mtime(base_webp_path) >= source_mtime
+    rescue StandardError
+      false
     end
 
-    def self.outputs_present?(base_path, original_width)
+    def self.read_image_width(path)
+      image = Vips::Image.new_from_file(path, access: :sequential)
+      image = image.autorot if image.respond_to?(:autorot)
+      image.width
+    rescue StandardError
+      0
+    end
+
+    def self.outputs_fresh?(base_path, source_mtime, original_width)
       base_webp_path = "#{base_path}.webp"
-      return false unless File.exist?(base_webp_path) && File.size(base_webp_path) > 0
+      if File.exist?(base_webp_path) && !File.size?(base_webp_path)
+        File.delete(base_webp_path)
+        return false
+      end
+      return false unless File.size?(base_webp_path)
+      return false if File.mtime(base_webp_path) < source_mtime
 
       expected_sizes = SIZES.select { |w| w <= original_width }
       expected_sizes.each do |width|
         webp_path = "#{base_path}-#{width}w.webp"
-        return false unless File.exist?(webp_path) && File.size(webp_path) > 0
+        if File.exist?(webp_path) && !File.size?(webp_path)
+          File.delete(webp_path)
+          return false
+        end
+        return false unless File.size?(webp_path)
+        return false if File.mtime(webp_path) < source_mtime
       end
 
       true
+    rescue StandardError => e
+      warn "[vips-webp] failed to check freshness for #{File.basename(base_path)}: #{e.message}"
+      false
+    end
+
+    def self.cleanup_zero_outputs(base_path)
+      paths = ["#{base_path}.webp"]
+      SIZES.each { |width| paths << "#{base_path}-#{width}w.webp" }
+
+      paths.each do |webp_path|
+        next unless File.exist?(webp_path)
+        next if File.size?(webp_path)
+
+        File.delete(webp_path)
+        puts "[vips-webp] removed empty #{File.basename(webp_path)}"
+      end
+    rescue StandardError => e
+      warn "[vips-webp] failed to clean empty outputs for #{File.basename(base_path)}: #{e.message}"
     end
 
     def self.cleanup_stale_responsive_images(base_path, original_width)
@@ -177,22 +201,6 @@ module ItalAI
       warn "[vips-webp] failed to clean stale images for #{File.basename(base_path)}: #{e.message}"
     end
 
-    def self.load_cache_manifest
-      return {} unless @cache_manifest_path && File.exist?(@cache_manifest_path)
-
-      JSON.parse(File.read(@cache_manifest_path))
-    rescue StandardError => e
-      warn "[vips-webp] failed to load cache manifest: #{e.message}"
-      {}
-    end
-
-    def self.save_cache_manifest
-      return unless @cache_manifest_path
-
-      File.write(@cache_manifest_path, JSON.pretty_generate(@cache_manifest))
-    rescue StandardError => e
-      warn "[vips-webp] failed to write cache manifest: #{e.message}"
-    end
   end
 end
 
