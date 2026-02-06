@@ -15,7 +15,7 @@
 
 {% if page.url == "/" %}
 <!-- Preload hero image on homepage -->
-<link rel="preload" as="image" href="/assets/images/hero-bg.webp" type="image/webp">
+<link rel="preload" as="script" href="/assets/js/flowmap-hero.js">
 <link rel="modulepreload" href="https://esm.sh/ogl@1.0.11/es2022/ogl.mjs">
 {% endif %}
 
@@ -59,9 +59,7 @@
 
 {% if page.url == "/" %}
     <script type="module">
-      requestIdleCallback(() => {
-        import('/assets/js/flowmap-hero.js');
-      }, { timeout: 2000 });
+      import('/assets/js/flowmap-hero.js');
     </script>
 {% endif %}
 </body>
