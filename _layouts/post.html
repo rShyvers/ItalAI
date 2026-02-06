@@ -65,8 +65,8 @@ layout: default
             For posts with the same date, sort by part number (ascending) so Part 1 comes before Part 2.
             {% endcomment %}
             {% assign sorted_posts = site.posts | where_exp: "post", "post.published_in_blog != false" | sort: "part" | sort: "date" | reverse %}
-            {% assign recent_posts = sorted_posts | limit: 3 %}
-            {% for post in recent_posts %}
+            {% for i in (0..2) %}
+            {% assign post = sorted_posts[i] %}
             <a href="{{ post.url }}" class="recent-post-item">
               <div style="position: relative">
                 <span class="recent-post-date">{{ post.date | date: "%d-%b-%Y" }}</span>
