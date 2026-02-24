@@ -24,7 +24,7 @@ module ItalAI
       require "parallel"
     rescue LoadError => e
       warn "[vips-webp] Missing dependencies: #{e.message}"
-      warn "[vips-webp] Responsive images must be pre-generated locally or in CI"
+      warn "[vips-webp] Skipping WebP generation."
       return
     else
       image_dir = File.join(site.source, "assets", "images")
@@ -64,8 +64,7 @@ module ItalAI
     def self.load_from_manifest(site)
       manifest_path = ENV["WEBP_MANIFEST"]
       unless File.exist?(manifest_path)
-        log_warn "WEBP_MANIFEST set to #{manifest_path} but file not found — falling back to full scan"
-        return scan_source_images(site)
+        raise "[vips-webp] WEBP_MANIFEST was set but file not found: #{manifest_path}"
       end
 
       paths = File.readlines(manifest_path, chomp: true)
@@ -288,7 +287,11 @@ if __FILE__ == $PROGRAM_NAME
 end
 
 if defined?(Jekyll)
-  Jekyll::Hooks.register :site, :after_init do |site|
-    ItalAI::VipsWebpGenerator.run(site)
+  if ENV["GITHUB_ACTIONS"] == "true"
+    puts "[vips-webp] Skipping Jekyll hook in GitHub Actions"
+  else
+    Jekyll::Hooks.register :site, :after_init do |site|
+      ItalAI::VipsWebpGenerator.run(site)
+    end
   end
 end
