@@ -78,7 +78,6 @@ jobs:
           cat changed_images.manifest
 
       - name: Setup Ruby
-        if: steps.manifest.outputs.any_changed == 'true'
         uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4
         with:
           ruby-version: '3.3'
