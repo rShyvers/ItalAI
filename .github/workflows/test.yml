@@ -60,10 +60,9 @@ jobs:
 
       - name: Test create and push to generated-assets branch
         run: |
-          # Use the step outcome rather than checking for .git — the checkout
-          # action initialises a .git dir even on failure, so that check is unreliable.
           if [ "${{ steps.checkout-generated.outcome }}" == "success" ]; then
             echo "generated-assets branch found — using existing checkout"
+            cd generated-assets
           else
             echo "generated-assets branch not found — initialising orphan branch"
             rm -rf generated-assets
@@ -73,16 +72,12 @@ jobs:
             git checkout --orphan generated-assets
             git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           fi
-
-          cd generated-assets
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Write a test file so there is always something to commit
           echo "branch test at $(date -u)" > .branch-test
           git add .branch-test
           git commit -m "test: verify generated-assets branch write access"
-          # Push HEAD to the remote branch name explicitly — avoids local branch name mismatch
           git push origin HEAD:generated-assets
 
           echo "---"
