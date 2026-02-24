@@ -1,0 +1,88 @@
+name: Test WebP Generation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  detect-and-generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          path: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout generated-assets branch
+        uses: actions/checkout@v4
+        with:
+          ref: generated-assets
+          path: generated-assets
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Hash source images and build manifest
+        id: manifest
+        run: |
+          > changed_images.manifest
+
+          while IFS= read -r -d '' src; do
+            rel="${src#main/}"
+            current_hash=$(sha256sum "$src" | cut -d' ' -f1)
+            stored=$(grep "  $rel$" generated-assets/manifest.sha256 2>/dev/null | cut -d' ' -f1)
+            if [ -z "$stored" ] || [ "$current_hash" != "$stored" ]; then
+              echo "Changed or missing: $rel"
+              echo "$rel" >> changed_images.manifest
+            fi
+          done < <(find main/assets/images \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) -print0 2>/dev/null)
+
+          COUNT=$(wc -l < changed_images.manifest | tr -d ' ')
+          echo "changed_count=$COUNT" >> $GITHUB_OUTPUT
+
+          if [ "$COUNT" -gt "0" ]; then
+            echo "any_changed=true" >> $GITHUB_OUTPUT
+            echo "$COUNT image(s) need regeneration"
+          else
+            echo "any_changed=false" >> $GITHUB_OUTPUT
+            echo "All images are up to date"
+          fi
+
+      - name: Print manifest
+        run: |
+          echo "any_changed: ${{ steps.manifest.outputs.any_changed }}"
+          echo "changed_count: ${{ steps.manifest.outputs.changed_count }}"
+          echo "---"
+          cat changed_images.manifest
+
+      - name: Test create and push to generated-assets branch
+        run: |
+          # If the checkout earlier succeeded, generated-assets/ already exists
+          # with a .git dir pointing at the remote branch — use it directly.
+          # If it failed (branch doesn't exist yet), initialise an orphan.
+          if [ ! -d generated-assets/.git ]; then
+            echo "generated-assets branch not found — initialising orphan branch"
+            mkdir -p generated-assets
+            cd generated-assets
+            git init
+            git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+            git checkout --orphan generated-assets
+          else
+            echo "generated-assets branch found — using existing checkout"
+            cd generated-assets
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Write a test file so there is always something to commit
+          echo "branch test at $(date -u)" > .branch-test
+          git add .branch-test
+          git commit -m "test: verify generated-assets branch write access"
+          git push origin generated-assets
+
+          echo "---"
+          echo "Push succeeded — branch is writable"
+          echo "Commit: $(git rev-parse HEAD)"
