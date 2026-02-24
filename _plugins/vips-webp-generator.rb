@@ -274,6 +274,21 @@ module ItalAI
   end
 end
 
-Jekyll::Hooks.register :site, :after_init do |site|
+if __FILE__ == $PROGRAM_NAME
+  require "ostruct"
+
+  source_dir = ARGV[0] || Dir.pwd
+
+  site = OpenStruct.new(source: File.expand_path(source_dir))
+
+  puts "[vips-webp] Running in CLI mode"
+  puts "[vips-webp] Source: #{site.source}"
+
   ItalAI::VipsWebpGenerator.run(site)
+end
+
+if defined?(Jekyll)
+  Jekyll::Hooks.register :site, :after_init do |site|
+    ItalAI::VipsWebpGenerator.run(site)
+  end
 end

@@ -58,7 +58,29 @@ jobs:
           echo "---"
           cat changed_images.manifest
 
-      - name: Test create and push to generated-assets branch
+      - name: Setup Ruby
+        if: steps.manifest.outputs.any_changed == 'true'
+        uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: main
+
+      - name: Install libvips
+        if: steps.manifest.outputs.any_changed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
+
+      - name: Generate WebP images
+        if: steps.manifest.outputs.any_changed == 'true'
+        working-directory: main
+        run: ruby generate_webp.rb
+        env:
+          WEBP_MANIFEST: ${{ github.workspace }}/changed_images.manifest
+
+      - name: Commit and push to generated-assets branch
+        if: steps.manifest.outputs.any_changed == 'true'
         run: |
           if [ "${{ steps.checkout-generated.outcome }}" == "success" ]; then
             echo "generated-assets branch found — using existing checkout"
@@ -72,14 +94,29 @@ jobs:
             git checkout --orphan generated-assets
             git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           fi
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          echo "branch test at $(date -u)" > .branch-test
-          git add .branch-test
-          git commit -m "test: verify generated-assets branch write access"
+          # Copy generated WebPs from the jekyll build
+          find ../main/assets/images -name "*.webp" | while IFS= read -r f; do
+            rel="${f#../main/}"
+            mkdir -p "$(dirname "$rel")"
+            cp "$f" "$rel"
+          done
+
+          # Rebuild manifest.sha256 from current source images
+          > manifest.sha256
+          find ../main/assets/images \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) | while IFS= read -r f; do
+            rel="${f#../main/}"
+            echo "$(sha256sum "$f" | cut -d' ' -f1)  $rel" >> manifest.sha256
+          done
+
+          git add .
+          git diff --staged --quiet && echo "Nothing to commit" && exit 0
+          git commit -m "chore: regenerate WebP images (${{ steps.manifest.outputs.changed_count }} changed)"
           git push origin HEAD:generated-assets
 
           echo "---"
-          echo "Push succeeded — branch is writable"
+          echo "Push succeeded"
           echo "Commit: $(git rev-parse HEAD)"
