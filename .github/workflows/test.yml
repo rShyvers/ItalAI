@@ -75,7 +75,7 @@ jobs:
       - name: Generate WebP images
         if: steps.manifest.outputs.any_changed == 'true'
         working-directory: main
-        run: ruby _plugins/vips-webp-generator.rb
+        run: bundle exec ruby _plugins/vips-webp-generator.rb
         env:
           WEBP_MANIFEST: ${{ github.workspace }}/changed_images.manifest
 
