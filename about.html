@@ -119,36 +119,40 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
       <div class="partner-container">
           <!-- Static Grid for Desktop -->
           <div class="partners-grid">
-            {% for file in site.static_files %}
-              {% if file.path contains "/assets/images/partners/" 
-                    and file.path contains "/generated_assets/" == false %}
-                
-                {% unless file.name contains "w.webp" %}
-                  <div class="partner-card">
-                    <img 
-                      src="{{ file.path }}" 
-                      alt="{{ file.name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' | capitalize }}" 
-                      class="partner-logo" 
-                      loading="lazy">
-                  </div>
-                {% endunless %}
+            {% assign partners_dir = "/assets/images/partners/" %}
 
+            {% for file in site.static_files %}
+              {% if file.extname == ".webp" %}
+                {% assign file_dir = file.path | remove: file.name %}
+                {% if file_dir == partners_dir %}
+                  {% unless file.name contains "w.webp" %}
+                    <div class="partner-card">
+                      <img 
+                        src="{{ file.path }}" 
+                        alt="{{ file.name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' | capitalize }}" 
+                        class="partner-logo" 
+                        loading="lazy">
+                    </div>
+                  {% endunless %}
+                {% endif %}
               {% endif %}
             {% endfor %}
           </div>
 
           <!-- Carousel for Mobile/Tablet (same content) -->
           <div class="partners-carousel owl-carousel owl-theme">
-            {% for file in site.static_files %}
-              {% if file.path contains "/assets/images/partners/" 
-                    and file.path contains "/generated_assets/" == false %}
-                
-                {% unless file.name contains "w.webp" %}
-                  <div class="partner-card">
-                    <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
-                  </div>
-                {% endunless %}
+            {% assign partners_dir = "/assets/images/partners/" %}
 
+            {% for file in site.static_files %}
+              {% if file.extname == ".webp" %}
+                {% assign file_dir = file.path | remove: file.name %}
+                {% if file_dir == partners_dir %}
+                  {% unless file.name contains "w.webp" %}
+                    <div class="partner-card">
+                      <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
+                    </div>
+                  {% endunless %}
+                {% endif %}
               {% endif %}
             {% endfor %}
           </div>
