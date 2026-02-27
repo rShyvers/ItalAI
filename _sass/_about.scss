@@ -483,11 +483,11 @@
         z-index: 1;
         background-color: var(--standard-blue); /* Make visible on hover */
     }
-    &:hover .person-image::before {
-        opacity: 1; /* Make visible on hover */
+    &:hover .person-image:not(:has(img.no-hover))::before {
+      opacity: 1; /* Make visible on hover */
     }
-    &:hover .person-image img {
-        filter: grayscale(0%);
+    &:hover .person-image img:not(.no-hover) {
+      filter: grayscale(0%);
     }
 }
 .blank-card {

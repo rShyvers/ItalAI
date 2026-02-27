@@ -1,11 +1,18 @@
 team:
   - name: Luca Rigazio
     role: Co-founder & CEO
+    phone: +1 (408) 256-1590
+    email: luca.rigazio@italailabs.com
+    bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    timezone: "America/Los_Angeles" # Timezone field for vCard. If not specified, defaults to Rome
     links:
       linkedin: https://www.linkedin.com/in/lucarigazio/
     
   - name: Fabio Galasso
     role: Co-founder & CTO
+    phone: +39 345 5969678
+    email: fabio.galasso@italailabs.com
+    bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     links:
       github: https://github.com/fgalasso
       linkedin: https://www.linkedin.com/in/fabio-galasso-61141b32/
@@ -16,10 +23,19 @@ team:
   - name: Luca Franco
     role: General Manager
     credentials: PhD in Data Science
+    phone: +39 393 3801982
+    email: luca.franco@italailabs.com
+    links:
+      linkedin: https://www.linkedin.com/in/luca-franco-968819196/
 
   - name: Alessio Sampieri
     role: Lead Researcher
     credentials: PhD in Data Science
+    phone: +39 334 2769490
+    email: alessio.sampieri@italailabs.com
+    links:
+      linkedin: https://www.linkedin.com/in/alessio-sampieri/
+      twitter: https://x.com/AlessioSampier1
     
   - name: Anastasiia Motyreva
     role: Head of Marketing & Communications

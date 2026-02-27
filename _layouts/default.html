@@ -21,6 +21,8 @@
 
 {% if page.url contains '/insights/' and page.url != '/insights/' %}
   {% assign stylesheet = 'post' %}
+{% elsif page.url contains '/about/' and page.url != '/about/' %}
+  {% assign stylesheet = 'vcard' %}
 {% elsif page.url contains '/404.html' %}
   {% assign stylesheet = '404' %}
 {% else %}

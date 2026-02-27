@@ -238,12 +238,15 @@ $(document).ready(function(){
             </div>
           {% endif %}
           <div class="person-image">
+            {% assign person_slug = person.name | replace: ' ', '-' | downcase %}
+            {% assign vcard_url = "/about/" | append: person_slug | append: "/" %}
+            {% assign vcard_exists = site.pages | where: "url", vcard_url | size %}
             <img
-              src="/assets/images/people/{{ person.name | replace: ' ', '-' | downcase }}.png"
+              src="/assets/images/people/{{ person_slug }}.png"
               alt="{{ person.name }}"
-              class="person-img"
-              {% if person.url %}
-              onclick="window.open('{{ person.url }}', '_blank')"
+              class="person-img{% unless vcard_exists > 0 %} no-hover{% endunless %}"
+              {% if vcard_exists > 0 %}
+              onclick="window.open('{{ vcard_url }}', '_blank')"
               style="cursor: pointer;"
               {% endif %}
             >

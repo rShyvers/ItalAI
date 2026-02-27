@@ -11,3 +11,4 @@
 # Images - only track WebP format
 *.webp
 *.webp.meta
+*.vcf

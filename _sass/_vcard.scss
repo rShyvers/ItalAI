@@ -1,0 +1,237 @@
+
+.vcard-page {
+  --vc-border: color-mix(in srgb, var(--standard-blue) 20%, transparent);
+  --vc-blue-dim: color-mix(in srgb, var(--standard-blue) 10%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--standard-light);
+}
+
+
+
+
+/* ── Card ── */
+.vc-card {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+}
+
+
+.vc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  border-bottom: 1px solid var(--vc-border);
+  text-decoration: none;
+  color: var(--vc-text);
+  background: transparent;
+  transition: background 0.18s;
+}
+
+.vc-row:last-child {
+  border-bottom: none;
+}
+
+// Does not also have no-hover
+.vc-row:hover:not(.no-hover) {
+  background: var(--vc-blue-dim);
+}
+
+.vc-row:hover:not(.no-hover) .vc-row-icon-wrap {
+  border-color: var(--standard-blue);
+  color: var(--standard-blue);
+  background: color-mix(in srgb, var(--standard-blue) 15%, transparent);
+}
+
+.vc-row:hover:not(.no-hover) .vc-row-value {
+  color: var(--vc-text);
+}
+
+
+/* Icon in a small outlined box */
+.vc-row-icon-wrap {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--vc-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: var(--standard-light-alt);
+  transition: border-color 0.18s, color 0.18s, background 0.18s;
+}
+
+
+.vc-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.vc-row-label {
+  font-family: var(--header-family);
+  font-size: 0.48rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--standard-light-alt);
+  opacity: 0.7;
+}
+
+.vc-row-value {
+  font-family: var(--header-family);
+  font-size: 0.7rem;
+  color: color-mix(in srgb, var(--standard-light) 75%, transparent);
+  transition: color 0.18s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+/* ── Download button ── */
+.vc-btn {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.vc-btn:hover {
+  background: var(--standard-green);
+  color: var(--standard-dark);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--standard-green) 30%, transparent);
+}
+
+
+/* ── Back link ── */
+.person-card {
+  position: relative;
+  background: var(--standard-dark-alt);
+  border: 1px solid var(--standard-dark);
+  border-radius: 29px;
+  overflow: hidden;
+  flex: 45%;
+}
+
+.person-image {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--standard-blue);
+  border-radius: 25px;
+}
+
+.person-image img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  transition: background 0.18s;
+}
+
+.person-info {
+  padding: 20px;
+}
+
+.person-name {
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--standard-dark);
+}
+
+.person-role {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--standard-blue);
+  line-height: 1.4;
+}
+
+.team-socials {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 12;
+  background: rgba(0, 0, 0);
+  border-radius: 10px;
+  padding: 10px;
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+.team-socials li {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.team-socials a {
+  width: var(--trigger-icon-size, 18px);
+  height: var(--trigger-icon-size, 18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+.team-socials a i {
+  font-size: var(--social-icon-size, 18px);
+}
+.team-socials a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transform: scale(1.1);
+}
+
+.socials {
+  text-decoration: none;
+  color: var(--standard-light);
+}
+.socials:hover {
+  color: var(--standard-blue);
+}
+
+
+/* Desktop layout: Contact card on the right */
+@media (min-width: 768px) {
+  .vc-card {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .person-card {
+    margin-right: var(--space-lg);
+  }
+  .person-bio {
+    flex: 40%;
+  }
+}
+
+/* Mobile layout: Bio wraps under the contact card */
+@media (max-width: 767px) {
+  .vc-card {
+    flex-direction: column;
+    align-items: center;
+  }
+  .person-card,
+  .person-bio {
+    width: 100%;
+  }
+  .person-card {
+    margin-bottom: var(--space-md);
+  }
+}
