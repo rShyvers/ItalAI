@@ -482,6 +482,7 @@
         transition: opacity 0.3s ease-in-out; /* Smooth transition */
         z-index: 1;
         background-color: var(--standard-blue); /* Make visible on hover */
+        pointer-events: none; // Pathhrough for mouse events to the image
     }
     &:hover .person-image:not(:has(img.no-hover))::before {
       opacity: 1; /* Make visible on hover */

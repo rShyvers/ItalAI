@@ -119,30 +119,42 @@ BRIDGING ACADEMIA AND INDUSTRY<span class='period'>.</span>
       <div class="partner-container">
           <!-- Static Grid for Desktop -->
           <div class="partners-grid">
-              {% assign partner_files = site.static_files | where: "extname", ".webp" %}
-              {% for file in partner_files %}
-                  {% if file.path contains "/assets/images/partners/" %}
-                  {% unless file.path contains "w.webp" %}
-              <div class="partner-card">
-                  <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
-              </div>
+            {% assign partners_dir = "/assets/images/partners/" %}
+
+            {% for file in site.static_files %}
+              {% if file.extname == ".webp" %}
+                {% assign file_dir = file.path | remove: file.name %}
+                {% if file_dir == partners_dir %}
+                  {% unless file.name contains "w.webp" %}
+                    <div class="partner-card">
+                      <img 
+                        src="{{ file.path }}" 
+                        alt="{{ file.name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' | capitalize }}" 
+                        class="partner-logo" 
+                        loading="lazy">
+                    </div>
                   {% endunless %}
-                  {% endif %}
-              {% endfor %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
           </div>
 
           <!-- Carousel for Mobile/Tablet (same content) -->
           <div class="partners-carousel owl-carousel owl-theme">
-              {% assign partner_files = site.static_files | where: "extname", ".webp" %}
-              {% for file in partner_files %}
-                  {% if file.path contains "/assets/images/partners/" %}
-                  {% unless file.path contains "w.webp" %}
-              <div class="partner-card">
-                  <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
-              </div>
+            {% assign partners_dir = "/assets/images/partners/" %}
+
+            {% for file in site.static_files %}
+              {% if file.extname == ".webp" %}
+                {% assign file_dir = file.path | remove: file.name %}
+                {% if file_dir == partners_dir %}
+                  {% unless file.name contains "w.webp" %}
+                    <div class="partner-card">
+                      <img src="{{ file.path }}" alt="{{ file.name | split: "." | first | replace: "-", " " | replace: "_", " " | capitalize }}" class="partner-logo" loading="lazy">
+                    </div>
                   {% endunless %}
-                  {% endif %}
-              {% endfor %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
           </div>
       </div>
     </div>
@@ -241,15 +253,16 @@ $(document).ready(function(){
             {% assign person_slug = person.name | replace: ' ', '-' | downcase %}
             {% assign vcard_url = "/about/" | append: person_slug | append: "/" %}
             {% assign vcard_exists = site.pages | where: "url", vcard_url | size %}
-            <img
-              src="/assets/images/people/{{ person_slug }}.png"
-              alt="{{ person.name }}"
-              class="person-img{% unless vcard_exists > 0 %} no-hover{% endunless %}"
-              {% if vcard_exists > 0 %}
-              onclick="window.open('{{ vcard_url }}', '_blank')"
-              style="cursor: pointer;"
-              {% endif %}
+            <a
+              {% if vcard_exists > 0 %}href="{{ vcard_url }}" title="{{ person.name }}'s vCard" aria-label="View {{ person.name }}'s profile"{% else %}tabindex="-1" aria-disabled="true"{% endif %}
             >
+              <img
+                src="/assets/images/people/{{ person_slug }}.png"
+                alt="Photo of {{ person.name }}{% if person.role %}, {{ person.role }}{% endif %}{% if person.credentials %}, {{ person.credentials }}{% endif %}"
+                class="person-img{% unless vcard_exists > 0 %} no-hover{% endunless %}"
+                loading="lazy"
+              >
+            </a>
           </div>
           <div class="person-info">
             <h3 class="person-name h5-size">{{ person.name }}</h3>
