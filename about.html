@@ -263,7 +263,7 @@ $(document).ready(function(){
             </a>
           </div>
           <div class="person-info">
-            <h3 class="person-name h5-size">{{ person.name }}</h3>
+            <h3 class="person-name h5-size">{% if person.professor %}Prof. {% endif %}{{ person.name }}</h3>
             <p class="person-role">{{ person.role }}{% if person.credentials %}, {{ person.credentials }}{% endif %}</p>
           </div>
         </div>

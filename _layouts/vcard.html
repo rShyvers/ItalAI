@@ -20,7 +20,7 @@ sitemap: false
                 </div>
 
                 <div class="person-info">
-                    <h1 class="person-name">{{ page.person.name }}</h1>
+                    <h1 class="person-name">{% if page.person.professor %}Prof. {% endif %}{{ page.person.name }}</h1>
                     {% if page.person.role %}
                     <p class="person-role">{{ page.person.role }}</p>
                     {% endif %}

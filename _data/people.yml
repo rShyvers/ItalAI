@@ -8,6 +8,7 @@ team:
       linkedin: https://www.linkedin.com/in/lucarigazio/
     
   - name: Fabio Galasso
+    professor: true
     role: Co-founder & CTO
     phone: +39 345 5969678
     email: fabio.galasso@italailabs.com
@@ -20,11 +21,10 @@ team:
       url: https://fgalasso.bitbucket.io/
     
   - name: Luca Franco
-    role: PhD, General Manager
+    role: General Manager
     credentials: PhD in Data Science
     phone: +39 393 3801982
     email: luca.franco@italailabs.com
-    location: Viale Regina Elena 295, Rome
     links:
       linkedin: https://www.linkedin.com/in/luca-franco-968819196/
 

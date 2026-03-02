@@ -33,7 +33,7 @@
   width: 100%;
   max-width: 400px;
   background: linear-gradient(135deg, var(--standard-blue) 0%, color-mix(in srgb, var(--standard-blue) 80%, var(--standard-light)) 100%);
-  border: 2px solid color-mix(in srgb, var(--standard-blue) 40%, white);
+  border: 4px solid var(--standard-green-alt);
   border-radius: 30px;
 }
 
@@ -44,7 +44,6 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) 0;
   text-decoration: none;
   color: white;
   background: transparent;
@@ -190,8 +189,7 @@
   overflow: hidden;
   background: transparent;
   border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--standard-blue) 50%, white);
-  box-shadow: 0 0 40px color-mix(in srgb, var(--standard-blue) 40%, transparent), 0 0 60px color-mix(in srgb, var(--standard-blue) 20%, transparent);
+  border: 4px solid var(--standard-green-alt);
   margin-top: var(--space-lg);
 }
 
