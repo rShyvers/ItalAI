@@ -251,21 +251,19 @@ $(document).ready(function(){
           {% endif %}
           <div class="person-image">
             {% assign person_slug = person.name | replace: ' ', '-' | downcase %}
-            {% assign vcard_url = "/about/" | append: person_slug | append: "/" %}
-            {% assign vcard_exists = site.pages | where: "url", vcard_url | size %}
             <a
-              {% if vcard_exists > 0 %}href="{{ vcard_url }}" title="{{ person.name }}'s vCard" aria-label="View {{ person.name }}'s profile"{% else %}tabindex="-1" aria-disabled="true"{% endif %}
-            >
+              tabindex="-1" aria-disabled="true"
+            > <!-- Incase a url is ever added in the future -->
               <img
                 src="/assets/images/people/{{ person_slug }}.png"
                 alt="Photo of {{ person.name }}{% if person.role %}, {{ person.role }}{% endif %}{% if person.credentials %}, {{ person.credentials }}{% endif %}"
-                class="person-img{% unless vcard_exists > 0 %} no-hover{% endunless %}"
+                class="person-img"
                 loading="lazy"
               >
             </a>
           </div>
           <div class="person-info">
-            <h3 class="person-name h5-size">{{ person.name }}</h3>
+            <h3 class="person-name h5-size">{% if person.professor %}Prof. {% endif %}{{ person.name }}</h3>
             <p class="person-role">{{ person.role }}{% if person.credentials %}, {{ person.credentials }}{% endif %}</p>
           </div>
         </div>
